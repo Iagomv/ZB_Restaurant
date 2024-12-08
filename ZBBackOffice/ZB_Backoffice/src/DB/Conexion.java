@@ -12,11 +12,10 @@ public class Conexion {
     // Constructor privado para evitar la creación de más instancias
     private Conexion() {
         try {
-            // Aquí se inicializa la conexión (ejemplo con JDBC)
+            // Aquí se inicializa la conexión
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection("jdbc:mysql://mysql.colexio-karbo.com/karbo_ivarela", "karbo_ivarela", "Alumno*2023");
+            this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/karbo_imartinez", "root", "");
         } catch (ClassNotFoundException | SQLException e) {
-            // Si ocurre algún error con la conexión, imprímelo o usa un logger
             e.printStackTrace();
         }
     }
