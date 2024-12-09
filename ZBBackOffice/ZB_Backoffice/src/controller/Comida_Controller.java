@@ -12,12 +12,12 @@ import java.util.List;
 import model.Comida;
 import DB.Conexion;
 
-public class comidaController {
+public class Comida_Controller {
     private Connection connection;
-    private String nombreTabla = "Zero_Bugs_Restaurant";
+    private String nombreTabla = "Zero_Bugs_Comidas";
 
 
-    public comidaController() {
+    public Comida_Controller() {
         this.connection = Conexion.getInstance().getConnection();
     }
 
@@ -50,7 +50,7 @@ public class comidaController {
         if (connection == null) {
             throw new SQLException("No se pudo conectar a la base de datos.");
         }
-        String sql = "INSERT INTO "+ nombreTabla +" (titulo, numero_ejemplares, stock, editorial, numero_paginas, ano_edicion, url_imagen_libro) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO "+ nombreTabla +" (nombre, tipo, precio, stock) VALUES (?, ?, ?, ?)";
         // Utilizamos PreparedStatement y ejecutamos la consulta
         try (PreparedStatement stmt = consultaPreparada(sql, comida)) {
             stmt.executeUpdate();
@@ -59,7 +59,73 @@ public class comidaController {
         }
     }
 
+    public List<Comida> obtenerComidas() throws SQLException {
+        List<Comida> comidas = new ArrayList<>();
+        String sql = "SELECT * FROM " + nombreTabla;
+        
+        try (Statement stmt = connection.createStatement(); 
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+                String tipo = rs.getString("tipo");
+                String precio = rs.getString("precio");
+                String stock = rs.getString("stock");
+                
+                comidas.add(new Comida(id, nombre, tipo, precio, stock));
+            }
+        }
+        return comidas;
+    }
     
+    public Comida obtenerComidaPorId(int id) throws SQLException {
+        Comida comida = null;
+        String sql = "SELECT * FROM " + nombreTabla + " WHERE id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String nombre = rs.getString("nombre");
+                    String tipo = rs.getString("tipo");
+                    String precio = rs.getString("precio");
+                    String stock = rs.getString("stock");
+                    comida = new Comida(id, nombre, tipo, precio, stock);
+                }
+            }
+        }
+        return comida;
+    }
+    
+    public void actualizarComida(Comida comida) throws SQLException {
+        if (connection == null) {
+            throw new SQLException("No se pudo conectar a la base de datos.");
+        }
+        String sql = "UPDATE " + nombreTabla + " SET nombre = ?, tipo = ?, precio = ?, stock = ? WHERE id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, comida.getNombre());
+            stmt.setString(2, comida.getTipo());
+            stmt.setString(3, comida.getPrecio());
+            stmt.setString(4, comida.getStock());
+            stmt.setInt(5, comida.getId());  // Especificamos el ID para saber qué actualizar
+            stmt.executeUpdate();
+        }
+    }
+    
+    public void eliminarComida(int id) throws SQLException {
+        if (connection == null) {
+            throw new SQLException("No se pudo conectar a la base de datos.");
+        }
+        String sql = "DELETE FROM " + nombreTabla + " WHERE id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        }
+    }
     
 /* 
     //Obtener un libro por la id

@@ -11,8 +11,7 @@ public class App {
         // Verifica si la conexión es válida
         if (conn != null) {
             System.out.println("Conexión exitosa a la base de datos.");
-            controller.comidaController comidaController = new controller.comidaController();
-            comidaController.agregarComidas(new model.Comida("Shushi", "japonesa", "Parametro 2", "Parametro 3"));
+            UI.MainFrame mainFrame = new UI.MainFrame();
 
         } else {
             System.out.println("Fallo en la conexión a la base de datos.");
