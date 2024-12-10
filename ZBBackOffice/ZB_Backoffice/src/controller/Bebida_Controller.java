@@ -99,7 +99,7 @@ public class Bebida_Controller {
         return bebida;
     }
     
-    public void actualizarbebida(Bebida bebida) throws SQLException {
+    public void actualizarbebida(int id, Bebida bebida) throws SQLException {
         if (connection == null) {
             throw new SQLException("No se pudo conectar a la base de datos.");
         }
@@ -110,7 +110,7 @@ public class Bebida_Controller {
             stmt.setString(2, bebida.getTipo());
             stmt.setString(3, bebida.getPrecio());
             stmt.setString(4, bebida.getStock());
-            stmt.setInt(5, bebida.getId());  // Especificamos el ID para saber qué actualizar
+            stmt.setInt(5, id);  // Especificamos el ID para saber qué actualizar
             stmt.executeUpdate();
         }
     }

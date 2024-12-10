@@ -94,8 +94,8 @@ public class MainFrame extends JFrame {
             case "bebidas":
                 if (panelPrincipal instanceof PanelBebidas) {
                     System.out.println("El panel Bebidas ya estaba cargado.");
-                }else{panelPrincipal = new PanelBebidas();  // Aquí puedes agregar tu panel específico para Bebidas
-                    panelPrincipal.setBackground(Color.GREEN); // Ejemplo de color}
+                }else{panelPrincipal = new PanelBebidas();  
+                    
                 }
                 break;
             case "comidas":
