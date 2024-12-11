@@ -1,30 +1,44 @@
 package Model;
 
-public class Plato {
-    private int id;
+public class Bebida {
 
+    private int id_bebida;
     private String nombre;
     private String tipo;
     private String precio;
     private String stock;
 
-    public Plato(String nombre, String tipo, String precio, String stock) {
+    public Bebida(String nombre, String tipo, String precio, String stock) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.precio = precio;
         this.stock = stock;
     }
 
-    public Plato(int id, String nombre, String tipo, String precio, String stock) {
-        this.id = id;
+    public Bebida(int id_bebida, String nombre, String tipo, String precio, String stock) {
+        this.id_bebida = id_bebida;
         this.nombre = nombre;
         this.tipo = tipo;
         this.precio = precio;
         this.stock = stock;
     }
 
-    public String[] getParametrosComida() {
+    public String[] getParametrosBebida() {
         return new String[] { this.nombre, this.tipo, this.precio, this.stock };
+    }
+
+    @Override
+    public String toString() {
+        return "Bebida nombre=" + nombre + ", tipo=" + tipo + ", precio=" + precio + ", stock=" + stock
+                + "]";
+    }
+
+    public int getId() {
+        return id_bebida;
+    }
+
+    public void setId(int id_bebida) {
+        this.id_bebida = id_bebida;
     }
 
     public String getNombre() {
@@ -57,14 +71,6 @@ public class Plato {
 
     public void setStock(String stock) {
         this.stock = stock;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
 }

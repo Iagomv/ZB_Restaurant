@@ -6,36 +6,44 @@ import javax.swing.text.html.CSS;
 
 import Model.CSala;
 import Model.Cliente;
+import Static.Personal;
+import Threads.ClienteThread;
 
 public class Simulacion {
     private int tiempoEntreClientes;
     private int cantidadCamareros;
     private int cantidadCocineros;
     private int cantidadMesas;
-    private int tiempoEntreCamareros;
-    private int tiempoEntreCocineros;
+    private int numeroDeCliente;
     private ArrayList<Cliente> clientes = new ArrayList<Cliente>();
 
-    Helpers.GetInstancia getInstancia = new Helpers.GetInstancia();
+    Helpers.Instanciador getInstancia = new Helpers.Instanciador();
 
     public Simulacion() {
-        while(true){
-            clientes.add(getInstancia.generarClientes(1));
-            CSala cSala = getInstancia.generarCSala(10);
-            //System.out.println("Se han generado " + clientes.size() + " clientes");
-            try {
-                Cliente cliente = clientes.removeFirst();
-                clientes.removeFirst();
-                System.out.println(cliente.getNumeroCliente() + " ha llegado a la sala");
-                cSala.acquire();
-                System.out.println("El cliente " + cliente.getNumeroCliente() + "se sienta a la mesa");
-            } catch (InterruptedException e) {
-                Helpers.ErrorMensajeConsola.error(e, "Error al generar clientes");
-            }
-        } 
-
-
+        setVariables();
+        // Bucle principal
+        while (true) {
+            clientes.add(getInstancia.generarCliente(numeroDeCliente, tiempoEntreClientes, "En espera"));
+            numeroDeCliente++;
+            Cliente cliente = clientes.remove(0);
+            new ClienteThread(cliente).run("generarCliente");
+        }
     }
 
-    
+    private void setVariables() {
+        this.tiempoEntreClientes = 1;
+        this.cantidadCamareros = 4;
+        this.cantidadCocineros = 2;
+        this.cantidadMesas = 10;
+    }
+
+    private void generarInstanciasRestaurante() {
+        Personal.cSala = getInstancia.generarCSala(cantidadMesas);
+        Personal.camareros = getInstancia.generarCamareros(cantidadCamareros);
+        Personal.cocineros = getInstancia.generarCocineros(cantidadCocineros);
+        Personal.sommelier = getInstancia.generarSommelier("Libre", null, null);
+        Personal.restaurante = getInstancia.generarRestaurante(Personal.Camareros, Personal.Cocineros, Personal.CSala,
+                Personal.sommelier, Personal.Mesas);
+    }
+
 }
