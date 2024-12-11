@@ -4,6 +4,7 @@ const DB_PORT = 3306
 DB_USER = 'root'
 DB_PASSWORD = ''
 DB_NAME = 'karbo_ivarela'
+
 // Crear una conexión a la base de datos
 const db = mysql.createConnection({
   host: DB_HOST,
