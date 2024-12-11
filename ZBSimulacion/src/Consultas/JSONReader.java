@@ -1,4 +1,4 @@
-package API;
+package Consultas;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,9 +11,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class JSONReader {
-    private ArrayList<Pokemon> pokeList;
-    private String previousUrl;
-    private String nextUrl;
 
     public JSONReader(String url) {
         try {
@@ -25,14 +22,14 @@ public class JSONReader {
 
     // * leearchivo -> obtenerPokemons -> obtenemos Pokemons y URLS*/
     private void obtenerDatos(String url) throws Exception {
-        pokeList = new ArrayList<>();
+        // pokeList = new ArrayList<>();
         JSONObject json = leerArchivo(url);
         if (json != null) {
             // Extraer Pokémon y URLs
             JSONArray jsonArray = (JSONArray) json.get("results");
-            obtenerPokemons(pokeList, jsonArray);
-            previousUrl = (String) json.get("previous");
-            nextUrl = (String) json.get("next");
+            // obtenerPokemons(pokeList, jsonArray);
+            // previousUrl = (String) json.get("previous");
+            // nextUrl = (String) json.get("next");
         }
 
         else {
@@ -67,30 +64,6 @@ public class JSONReader {
                 br.close();
             }
         }
-    }
-
-    // Loop -> Instanciamos nuevo pokemon y añadimos a lista
-    private static void obtenerPokemons(ArrayList<Pokemon> pokeList, JSONArray jsonArray) {
-        for (Object result : jsonArray) {
-            JSONObject pokeJson = (JSONObject) result;
-            Pokemon pokemon = new Pokemon(
-                    pokeJson.get("name").toString(),
-                    pokeJson.get("url").toString());
-            pokeList.add(pokemon);
-            // System.out.println(pokemon.getPokeNumero());
-        }
-    }
-
-    public ArrayList<Pokemon> getPokemonList() {
-        return pokeList;
-    }
-
-    public String getPreviousUrl() {
-        return previousUrl;
-    }
-
-    public String getNextUrl() {
-        return nextUrl;
     }
 
 }
