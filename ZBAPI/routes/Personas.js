@@ -1,3 +1,4 @@
+//Routes/Personas.js
 const express = require('express')
 const router = express.Router()
 const personasController = require('../controller/personasController') // Importamos el controlador

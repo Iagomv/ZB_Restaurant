@@ -1,12 +1,25 @@
-const uri = 'mongodb://localhost:27017' // Definimos la dirección de nuestra base de datos MongoDB (en este caso está en nuestro ordenador)
+const { MongoClient, ServerApiVersion } = require('mongodb')
+const uri = 'mongodb://localhost:27017' // URL of your MongoDB server
+
 const client = new MongoClient(uri, {
-  // Creamos una conexión con MongoDB
-  serverApi: {
-    version: ServerApiVersion.v1, // Usamos la versión 1 de la API de MongoDB
-    strict: true, // Aseguramos que la conexión sea estricta
-    deprecationErrors: true // Mostramos errores si algo está obsoleto
-  }
+	serverApi: {
+		version: ServerApiVersion.v1,
+		strict: true,
+		deprecationErrors: true,
+	},
 })
 
-// Exportar la conexión para usarla en otros archivos
-module.exports = client
+// Function to connect to the database
+const connectDB = async () => {
+	try {
+		// Connect to MongoDB server
+		await client.connect()
+		console.log('Conexión a la base de datos exitosa')
+	} catch (err) {
+		console.error('Error al conectar con la base de datos:', err)
+		throw err // Rethrow error to be caught by the caller
+	}
+}
+
+// Exporting the client and the connectDB function
+module.exports = { client, connectDB }

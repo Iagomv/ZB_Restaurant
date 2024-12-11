@@ -1,3 +1,4 @@
+//routes/index.js
 const express = require('express')
 const router = express.Router()
 
@@ -15,7 +16,7 @@ router.use('/pedidos', pedidosRoutes)
 
 // Ruta base de la API
 router.get('/', (req, res) => {
-  res.send('Bienvenido a la API del restaurante')
+	res.send('Bienvenido a la API del restaurante')
 })
 
 module.exports = router
