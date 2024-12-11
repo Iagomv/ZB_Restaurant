@@ -15,6 +15,7 @@ public class MainFrame extends JFrame {
     private JMenuBar menuBar;
     private JMenu Bebidas, Comidas, Personal;
     private JPanel panelPrincipal;
+
     public MainFrame() {
         propiedadesFrame();
         menuBar();
@@ -24,7 +25,7 @@ public class MainFrame extends JFrame {
     private void propiedadesFrame() {
         this.setTitle("Zero Bugs");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1000, 780);
+        this.setSize(1200, 780);
         this.setResizable(false);
         setLayout(new BorderLayout());
         this.setLocationRelativeTo(null);
@@ -72,9 +73,9 @@ public class MainFrame extends JFrame {
     // Método para crear la barra de menús
     public void menuBar() {
         menuBar = new JMenuBar();
-        setBebidas();    // Inicializa el menú Bebidas
-        setComidas();    // Inicializa el menú Comidas
-        setPersonal();   // Inicializa el menú Personal
+        setBebidas(); // Inicializa el menú Bebidas
+        setComidas(); // Inicializa el menú Comidas
+        setPersonal(); // Inicializa el menú Personal
 
         menuBar.add(Bebidas);
         menuBar.add(Comidas);
@@ -92,19 +93,25 @@ public class MainFrame extends JFrame {
         // Aquí agregamos paneles reales para Bebidas, Comidas y Personal
         switch (tipo) {
             case "bebidas":
-                if (panelPrincipal instanceof PanelBebidas) {
+                if (!(panelPrincipal instanceof PanelBebidas)) {
+                    panelPrincipal = new PanelBebidas();
+                } else {
                     System.out.println("El panel Bebidas ya estaba cargado.");
-                }else{panelPrincipal = new PanelBebidas();  
-                    
                 }
                 break;
             case "comidas":
-                panelPrincipal = new JPanel();  // Aquí puedes agregar tu panel específico para Comidas
-                panelPrincipal.setBackground(Color.YELLOW); // Ejemplo de color
+                if (!(panelPrincipal instanceof PanelComidas)) {
+                    panelPrincipal = new PanelComidas();
+                } else {
+                    System.out.println("El panel Comidas ya estaba cargado.");
+                }
                 break;
             case "personal":
-                panelPrincipal = new JPanel();  // Aquí puedes agregar tu panel específico para Personal
-                panelPrincipal.setBackground(Color.BLUE); // Ejemplo de color
+                if (!(panelPrincipal instanceof PanelPersonal)) {
+                    panelPrincipal = new PanelPersonal();
+                } else {
+                    System.out.println("El panel Personal ya estaba cargado.");
+                }
                 break;
             default:
                 panelPrincipal = new JPanel();

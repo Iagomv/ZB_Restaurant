@@ -8,38 +8,39 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import controller.Bebida_Controller;
-import model.Bebida;
+import controller.Comida_Controller;
+import controller.Comida_Controller;
+import model.Comida;
 
-public class PanelBebidas extends JPanel {
+public class PanelComidas extends JPanel {
 
-    Bebida_Controller bebidaController = new Bebida_Controller();
-    List<Bebida> bebidas = new ArrayList<>();
+    Comida_Controller comidaController = new Comida_Controller();
+    List<Comida> comidas = new ArrayList<>();
     DefaultTableModel modeloTabla;
     JTable table;
 
-    public PanelBebidas() {
+    public PanelComidas() {
         this.setLayout(new BorderLayout());
-        mostrarBebidas();
+        mostrarComidas();
     }
 
-    public void mostrarBebidas() {
+    public void mostrarComidas() {
         try {
-            bebidas = bebidaController.obtenerbebidas();
+            comidas = comidaController.obtenerComidas();
 
+            // Configuración del thead
             String[] columnas = { "Nombre", "Tipo", "Precio", "Stock", "Modificar", "Borrar" };
             modeloTabla = new DefaultTableModel(columnas, 0);
 
-            // LLenar la tabla con los datos SQL
-            for (Bebida bebida : bebidas) {
-                Object[] fila = { bebida.getNombre(), bebida.getTipo(), bebida.getPrecio(), bebida.getStock(), "Editar",
+            // Llenar la tabla con los datos SQL
+            for (Comida comida : comidas) {
+                Object[] fila = { comida.getNombre(), comida.getTipo(), comida.getPrecio(), comida.getStock(), "Editar",
                         "Eliminar" };
                 modeloTabla.addRow(fila);
             }
 
-            // Añadimos la fila vacía para agregar al final de la tabla
+            // Agregamos la fila vacía para agregar al final de la tabla
             modeloTabla.addRow(new Object[] { "", "", "", "", "Agregar", "" });
-
             table = new JTable(modeloTabla);
             aplicarEstilosTable();
 
@@ -50,34 +51,32 @@ public class PanelBebidas extends JPanel {
                     int row = table.rowAtPoint(e.getPoint());
                     int column = table.columnAtPoint(e.getPoint());
 
-                    if (row == bebidas.size() && column == 4) {
+                    if (row == comidas.size() && column == 4) {
                         // "Agregar" row clicked
                         try {
-                            agregarBebida(row); // Pass row index to get values from the "Agregar" row
+                            agregarComida(row);
                         } catch (SQLException ex) {
-                            mensajeErrorSQL(ex, "Error al agregar la bebida.", "Error");
+                            mensajeErrorSQL(ex, "Error al agregar la comida.", "Error");
                         }
                     } else if (column == 4) {
                         // "Editar" clicked
                         try {
-                            Bebida bebidaSeleccionada = bebidas.get(row);
-                            modificarBebida(bebidaSeleccionada, row);
+                            Comida comidaSeleccionada = comidas.get(row);
+                            modificarComida(comidaSeleccionada, row);
                         } catch (SQLException ex) {
-                            mensajeErrorSQL(ex, "Error al modificar la bebida.", "Error");
+                            mensajeErrorSQL(ex, "Error al modificar la comida.", "Error");
                         }
                     } else if (column == 5) {
                         // "Eliminar" clicked
                         try {
-                            Bebida bebidaSeleccionada = bebidas.get(row);
-                            eliminarFila(bebidaSeleccionada);
+                            Comida comidaSeleccionada = comidas.get(row);
+                            eliminarFila(comidaSeleccionada);
                         } catch (SQLException ex) {
-                            mensajeErrorSQL(ex, "Error al eliminar la bebida.", "Error");
+                            mensajeErrorSQL(ex, "Error al eliminar la comida.", "Error");
                         }
                     }
                 }
             });
-
-            // Wrap the table in a scroll pane
             JScrollPane scrollPane = new JScrollPane(table);
             scrollPane.setBorder(BorderFactory.createEmptyBorder(
                     20, 20, 20, 20));
@@ -88,43 +87,43 @@ public class PanelBebidas extends JPanel {
             this.repaint();
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener las bebidas");
+            System.out.println("Error al obtener las comidas");
             e.printStackTrace();
         }
     }
 
     // Eliminar la fila correspondiente
-    public void eliminarFila(Bebida bebida) throws SQLException {
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar esta bebida?");
+    public void eliminarFila(Comida comida) throws SQLException {
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar esta comida?");
         if (confirm == JOptionPane.YES_OPTION) {
-            bebidaController.eliminarbebida(bebida.getId());
-            bebidas.remove(bebida);
+            comidaController.eliminarComida(comida.getId());
+            comidas.remove(comida);
             actualizacionInterfaz();
 
         }
     }
 
-    // Modificar una bebida
-    public void modificarBebida(Bebida bebida, int row) throws SQLException {
+    // Modificar una comida
+    public void modificarComida(Comida comida, int row) throws SQLException {
         String nombre = table.getValueAt(row, 0).toString();
         String tipo = table.getValueAt(row, 1).toString();
         String precio = table.getValueAt(row, 2).toString();
         String stock = table.getValueAt(row, 3).toString();
 
-        Bebida bebidaActualizada = new Bebida(nombre, tipo, precio, stock);
+        Comida comidaActualizada = new Comida(nombre, tipo, precio, stock);
 
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar esta bebida?");
+        int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar esta comida?");
         if (confirm == JOptionPane.YES_OPTION) {
-            bebidaController.actualizarbebida(bebida.getId(), bebidaActualizada);
-            // Actualizar la lista de bebidas
-            int index = bebidas.indexOf(bebida);
-            bebidas.set(index, bebidaActualizada); // Reemplazar la bebida en la lista
+            comidaController.actualizarComida(comida.getId(), comidaActualizada);
+            // Actualizar la lista de comidas
+            int index = comidas.indexOf(comida);
+            comidas.set(index, comidaActualizada); // Reemplazar la comida en la lista
             actualizacionInterfaz();
         }
     }
 
-    // Agregar una nueva bebida
-    public void agregarBebida(int row) throws SQLException {
+    // Agregar una nueva comida
+    public void agregarComida(int row) throws SQLException {
         // Obtener los valores de la fila "Agregar"
         String nombre = table.getValueAt(row, 0).toString();
         String tipo = table.getValueAt(row, 1).toString();
@@ -138,12 +137,12 @@ public class PanelBebidas extends JPanel {
             return;
         }
 
-        // Crear la nueva bebida
-        Bebida nuevaBebida = new Bebida(nombre, tipo, precio, stock);
+        // Crear la nueva comida
+        Comida nuevaComida = new Comida(nombre, tipo, precio, stock);
 
-        // Llamar al controlador para agregar la bebida
-        bebidaController.agregarBebidas(nuevaBebida);
-        bebidas.add(nuevaBebida);
+        // Llamar al controlador para agregar la comida
+        comidaController.agregarComidas(nuevaComida);
+        comidas.add(nuevaComida);
 
         actualizacionInterfaz();
     }
@@ -151,7 +150,7 @@ public class PanelBebidas extends JPanel {
     // Mostrar el mensaje de error
     private void mensajeErrorSQL(SQLException ex, String mensaje, String titulo) {
         JOptionPane.showMessageDialog(
-                PanelBebidas.this,
+                PanelComidas.this,
                 mensaje,
                 titulo,
                 JOptionPane.ERROR_MESSAGE);
@@ -162,9 +161,9 @@ public class PanelBebidas extends JPanel {
         // Limpiar el modelo de la tabla
         modeloTabla.setRowCount(0); // Elimina todas las filas del modelo
 
-        // Añadir las filas de la lista de bebidas actualizada
-        for (Bebida bebida : bebidas) {
-            Object[] fila = { bebida.getNombre(), bebida.getTipo(), bebida.getPrecio(), bebida.getStock(), "Editar",
+        // Añadir las filas de la lista de comidas actualizada
+        for (Comida comida : comidas) {
+            Object[] fila = { comida.getNombre(), comida.getTipo(), comida.getPrecio(), comida.getStock(), "Editar",
                     "Eliminar" };
             modeloTabla.addRow(fila);
         }
