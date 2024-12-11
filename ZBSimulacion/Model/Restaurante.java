@@ -1,7 +1,6 @@
 package Model;
 
 import java.util.Random;
-
 import Static.Personal;
 
 public class Restaurante {
@@ -19,9 +18,10 @@ public class Restaurante {
         this.cocineros = cocineros;
         this.cSala = cSala;
         this.sommelier = sommelier;
-        this.mesas = mesas;
         this.clientes = clientes;
+        this.mesas = generarMesas();
         this.cantidadMesas = cantidadMesas;
+        generarMesas();
     }
 
     public CSala getcSala() {
@@ -72,10 +72,16 @@ public class Restaurante {
         this.clientes = clientes;
     }
 
-    private void generarMesas() {
+    // Generacion de mesas con 2 o 4 comensales
+    private Mesa[] generarMesas() {
+        Mesa[] thisMesas = new Mesa[cantidadMesas];
         for (int i = 0; i < cantidadMesas; i++) {
             Random random = new Random();
             int capacidadMesa = ((random.nextInt(4) + 1) > 2) ? 4 : 2; // Capacidad de 4 o 2 comensales
-            Mesa mesa = new Mesa(i+1,capacidadMesa, "Libre", null, camareros[i%4], null);
+            Mesa mesa = new Mesa(i + 1, capacidadMesa, "Libre", null, camareros[i % 4], null);
+            thisMesas[i] = mesa;
+        }
+        Personal.mesas = thisMesas;
+        return mesas;
     }
 }

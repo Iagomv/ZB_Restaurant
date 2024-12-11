@@ -8,7 +8,7 @@ public class Instanciador {
     public Cocinero[] generarCocineros(int cantidadCocineros) {
         Cocinero[] cocineros = new Cocinero[cantidadCocineros];
         for (int i = 0; i < cantidadCocineros; i++) {
-            cocineros[i] = new Cocinero();
+            cocineros[i] = new Cocinero(i, null, null, null);
         }
         return cocineros;
     }
@@ -23,7 +23,7 @@ public class Instanciador {
     public Camarero[] generarCamareros(int cantidadCamareros) {
         Camarero[] camareros = new Camarero[cantidadCamareros];
         for (int i = 0; i < cantidadCamareros; i++) {
-            camareros[i = 1] = new Camarero(i, null, null, null);
+            camareros[i] = new Camarero(i, null, null, null);
         }
         return camareros;
     }
@@ -37,18 +37,17 @@ public class Instanciador {
 
     // Genera un cliente con datos aleatorios
     public Cliente generarCliente(int numeroDeCliente, int tiempoEntreClientes, String estado) {
-
         Random random = new Random();
         int numeroPersonas = random.nextInt(4) + 1; // Genera un número aleatorio entre 1 y 4
 
-        Cliente cliente = new Cliente(numeroDeCliente, numeroPersonas, 0, estado, null);
-        System.out.println("Se ha generado un cliente con " + numeroPersonas + " personas");
+        Cliente cliente = new Cliente(numeroDeCliente, numeroPersonas, 0, estado, null, null);
+        System.out.println("Cliente: " + numeroDeCliente + " comensales: " + cliente.getNumeroComensales());
         return cliente;
     }
 
-    public Restaurante generarRestaurante(Camarero[] camareros, Cocinero[] cocineros, CSala cSala,
-            Sommelier sommelier, Mesa[] mesas) {
-        Restaurante restaurante = new Restaurante(camareros, cocineros, cSala, sommelier, mesas);
+    public Restaurante generarRestaurante(Camarero[] camareros, Cocinero[] cocineros, CSala cSala, Sommelier sommelier,
+            int cantidadMesas) {
+        Restaurante restaurante = new Restaurante(camareros, cocineros, cSala, sommelier, cantidadMesas);
         return restaurante;
     }
 

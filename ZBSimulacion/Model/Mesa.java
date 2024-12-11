@@ -17,6 +17,8 @@ public class Mesa {
         this.pedido = pedido;
         this.camareroAsignado = camareroAsignado;
         this.cliente = cliente;
+        System.out
+                .println("Mesa " + this.numeroMesa + " creada, con capacidad de " + this.capacidadMesa + " comensales");
     }
 
     public int getNumeroMesa() {
@@ -67,4 +69,14 @@ public class Mesa {
         this.cliente = cliente;
     }
 
+    public boolean isOcupada() {
+        return (this.cliente == null) ? false : true;
+    }
+
+    @Override
+    public String toString() {
+        return "Mesa [numeroMesa=" + numeroMesa + ", capacidadMesa=" + capacidadMesa + ", estadoMesa=" + estadoMesa
+                + ", pedido=" + pedido + ", camareroAsignado=" + camareroAsignado + ", cliente=" + cliente
+                + ", ocupada=" + ocupada + "]";
+    }
 }

@@ -6,13 +6,15 @@ public class Cliente extends Thread {
     private int numeroMesa;
     private String estado;
     private Pedido pedido;
+    private Mesa mesa;
 
-    public Cliente(int numeroCliente, int numeroComensales, int numeroMesa, String estado, Pedido pedido) {
+    public Cliente(int numeroCliente, int numeroComensales, int numeroMesa, String estado, Pedido pedido, Mesa mesa) {
         this.numeroCliente = numeroCliente;
         this.numeroComensales = numeroComensales;
         this.numeroMesa = numeroMesa;
         this.estado = estado;
         this.pedido = pedido;
+        this.mesa = mesa;
     }
 
     public void generarPedido() {
@@ -57,6 +59,14 @@ public class Cliente extends Thread {
 
     public void setNumeroCliente(int numeroCliente) {
         this.numeroCliente = numeroCliente;
+    }
+
+    public Mesa getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
     }
 
     @Override

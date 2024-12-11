@@ -27,12 +27,6 @@ public class Bebida {
         return new String[] { this.nombre, this.tipo, this.precio, this.stock };
     }
 
-    @Override
-    public String toString() {
-        return "Bebida nombre=" + nombre + ", tipo=" + tipo + ", precio=" + precio + ", stock=" + stock
-                + "]";
-    }
-
     public int getId() {
         return id_bebida;
     }
@@ -73,4 +67,9 @@ public class Bebida {
         this.stock = stock;
     }
 
+    @Override
+    public String toString() {
+        return "Bebida nombre=" + nombre + ", tipo=" + tipo + ", precio=" + precio + ", stock=" + stock
+                + "]";
+    }
 }
