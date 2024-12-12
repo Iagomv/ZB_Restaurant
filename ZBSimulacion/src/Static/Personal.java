@@ -9,6 +9,7 @@ import Model.Cocinero;
 import Model.Mesa;
 import Model.Restaurante;
 import Model.Sommelier;
+import Threads.CamareroThread;
 
 public class Personal {
     public static CSala cSala;

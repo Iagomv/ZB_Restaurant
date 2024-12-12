@@ -10,6 +10,7 @@ import Model.Cliente;
 import Model.Plato;
 import Static.Carta;
 import Static.Personal;
+import Threads.CamareroThread;
 import Threads.ClienteThread;
 
 public class Simulacion {
@@ -25,6 +26,7 @@ public class Simulacion {
     public Simulacion() {
         setVariables();
         generarInstanciasRestaurante();
+        generarHilos();
         generarCarta();
 
         // Bucle principal
@@ -71,4 +73,12 @@ public class Simulacion {
         Carta.numeroPostres = cartaHandler.getNumeroPostres();
     }
 
+    private void generarHilos() {
+        for (int i = 0; i < Personal.camareros.length; i++) {
+            CamareroThread camareroThread = new CamareroThread(Personal.camareros[i]);
+        }
+        for (int i = 0; i < Personal.cocineros.length; i++) {
+            // new Thread(Personal.cocineros[i]).start();
+        }
+    }
 }

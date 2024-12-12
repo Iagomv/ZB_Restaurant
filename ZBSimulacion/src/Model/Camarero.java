@@ -11,7 +11,7 @@ public class Camarero {
         this.estado = estado;
         this.pedido = pedido;
         this.plato = plato;
-        System.out.println("Camarero: " + idCamarero + " creado");
+        // System.out.println("Camarero: " + idCamarero + " creado");
     }
 
     public int getIdCamarero() {

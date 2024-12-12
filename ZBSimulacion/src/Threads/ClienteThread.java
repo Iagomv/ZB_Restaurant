@@ -24,6 +24,9 @@ public class ClienteThread extends Cliente implements Runnable {
             realizarPedido();
             Pedido pedidoActualizadoConID = APIinsert.enviarPedido(this.getPedido());
             this.setPedido(pedidoActualizadoConID);
+
+            // TODO modificar estado de pedido --> En cola?
+
             // Camarero.start();
         }
     }

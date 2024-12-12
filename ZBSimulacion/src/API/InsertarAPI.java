@@ -34,7 +34,7 @@ public class InsertarAPI {
 
                 // Manejar la respuesta
                 if (response.statusCode() == 201) {
-                    System.out.println("El camarero crea la comanda: " + response.body());
+                    System.out.println("Llamada api exitosa. El camarero crea la comanda: " + response.body());
                     pedido.setIdPedido(response.body());
                     return pedido;
                 } else {

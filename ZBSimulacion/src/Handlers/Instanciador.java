@@ -23,7 +23,7 @@ public class Instanciador {
     public Camarero[] generarCamareros(int cantidadCamareros) {
         Camarero[] camareros = new Camarero[cantidadCamareros];
         for (int i = 0; i < cantidadCamareros; i++) {
-            camareros[i] = new Camarero(i, null, null, null);
+            camareros[i] = new Camarero(i, "libre", null, null);
         }
         return camareros;
     }
@@ -41,7 +41,8 @@ public class Instanciador {
         int numeroPersonas = random.nextInt(4) + 1; // Genera un número aleatorio entre 1 y 4
 
         Cliente cliente = new Cliente(numeroDeCliente, numeroPersonas, 0, estado, null, null);
-        System.out.println("Cliente: " + numeroDeCliente + " comensales: " + cliente.getNumeroComensales());
+        // System.out.println("Cliente: " + numeroDeCliente + " comensales: " +
+        // cliente.getNumeroComensales());
         return cliente;
     }
 

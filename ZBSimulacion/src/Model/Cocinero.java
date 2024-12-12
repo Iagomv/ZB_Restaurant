@@ -11,7 +11,7 @@ public class Cocinero {
         this.estado = estado;
         this.pedido = pedido;
         this.plato = plato;
-        System.out.println("Cocinero: " + idCocinero + " creado");
+        // System.out.println("Cocinero: " + idCocinero + " creado");
     }
 
     public int getIdCocinero() {
