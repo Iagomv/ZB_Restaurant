@@ -3,19 +3,18 @@ package Model;
 import java.util.Arrays;
 
 public class Pedido {
-    private int idPedido;
+    private String idPedido;
     private String estado;
     private Bebida bebidaPedido;
     private Plato entrante;
     private Plato primero;
     private Plato postre;
-
     private Mesa mesa;
-
     private Cliente cliente;
     private String precio;
+    private Camarero camarero;
 
-    public Pedido(Integer idPedido, String estado, Bebida bebidaPedido, Plato entrante, Plato primero, Plato postre,
+    public Pedido(String idPedido, String estado, Bebida bebidaPedido, Plato entrante, Plato primero, Plato postre,
             Mesa mesa, Cliente cliente) {
 
         this.idPedido = idPedido == null ? null : idPedido;
@@ -29,11 +28,26 @@ public class Pedido {
         this.precio = calcularPrecioPedido();
     }
 
-    public int getIdPedido() {
+    public Pedido(String idPedido, String estado, Bebida bebidaPedido, Plato entrante, Plato primero, Plato postre,
+            Mesa mesa, Cliente cliente, Camarero camarero) {
+
+        this.idPedido = idPedido == null ? null : idPedido;
+        this.estado = estado;
+        this.bebidaPedido = bebidaPedido;
+        this.entrante = entrante;
+        this.primero = primero;
+        this.postre = postre;
+        this.mesa = mesa;
+        this.cliente = cliente;
+        this.precio = calcularPrecioPedido();
+        this.camarero = camarero;
+    }
+
+    public String getIdPedido() {
         return idPedido;
     }
 
-    public void setIdPedido(int idPedido) {
+    public void setIdPedido(String idPedido) {
         this.idPedido = idPedido;
     }
 

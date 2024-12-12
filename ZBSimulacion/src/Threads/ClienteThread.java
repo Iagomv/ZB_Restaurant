@@ -5,6 +5,7 @@ import Handlers.PedidoHandler;
 import Handlers.PedidoToJSON;
 import Handlers.ProcessHandler;
 import Model.Cliente;
+import Model.Mesa;
 import Model.Pedido;
 import Static.Personal;
 
@@ -17,17 +18,25 @@ public class ClienteThread extends Cliente implements Runnable {
                 cliente.getPedido(), cliente.getMesa());
     }
 
+    // !Método principal del hilo */
     public void run() {
-        hablarConCamareroSala();
-        realizarPedido();
-        APIinsert.enviarPedido(this.getPedido());
-
+        if (pedirMesaCamareroSala()) {
+            realizarPedido();
+            Pedido pedidoActualizadoConID = APIinsert.enviarPedido(this.getPedido());
+            this.setPedido(pedidoActualizadoConID);
+            // Camarero.start();
+        }
     }
 
     // Adquirimos semaforo y obtenemos la mesa
-    private void hablarConCamareroSala() {
-        if (Personal.cSala.asignarMesa(this) != null) {
-            this.setMesa(Personal.cSala.asignarMesa(this));
+    private boolean pedirMesaCamareroSala() {
+        Mesa mesa = Personal.cSala.asignarMesa(this);
+        if (mesa != null) {
+            this.setMesa(mesa);
+            this.getMesa().setEstadoMesa("Ocupada");
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -40,4 +49,7 @@ public class ClienteThread extends Cliente implements Runnable {
         this.setPedido(pedido);
     }
 
+    private void actualizarEstadoPedido(String estado) {
+        this.getPedido().setEstado(estado);
+    }
 }

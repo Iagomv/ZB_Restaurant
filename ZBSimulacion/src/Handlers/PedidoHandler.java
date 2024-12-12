@@ -15,7 +15,7 @@ public class PedidoHandler {
             Plato entrante = Carta.entrantes.get(entranteElegido);
             Plato primero = Carta.primeros.get(primeroElegido);
             Plato postre = Carta.postres.get(postreElegido);
-            Pedido pedido = new Pedido(0, "pendiente", bebida, entrante, primero, postre, cliente.getMesa(),
+            Pedido pedido = new Pedido("0", "pendiente", bebida, entrante, primero, postre, cliente.getMesa(),
                     cliente);
             return pedido;
         } catch (Exception e) {

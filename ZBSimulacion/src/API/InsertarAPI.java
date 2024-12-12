@@ -16,7 +16,7 @@ public class InsertarAPI {
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void enviarPedido(Pedido pedido) {
+    public Pedido enviarPedido(Pedido pedido) {
         try {
             // Convertir el pedido a JSON
             PedidoToJSON pedidoToJSON = new PedidoToJSON();
@@ -34,7 +34,9 @@ public class InsertarAPI {
 
                 // Manejar la respuesta
                 if (response.statusCode() == 201) {
-                    System.out.println("Pedido enviado exitosamente: " + response.body());
+                    System.out.println("El camarero crea la comanda: " + response.body());
+                    pedido.setIdPedido(response.body());
+                    return pedido;
                 } else {
                     System.err.println("Error al enviar el pedido. Código: " + response.statusCode());
                     System.err.println("Respuesta: " + response.body());
@@ -47,5 +49,6 @@ public class InsertarAPI {
             System.err.println("Error al enviar el pedido: " + e.getMessage());
             e.printStackTrace();
         }
+        return null;
     }
 }
