@@ -33,7 +33,7 @@ const insertarPedido = async (req, res) => {
 	try {
 		const nuevoPedido = req.body
 		const resultado = await cPedidos.insertOne(nuevoPedido)
-		res.status(201).json({ mensaje: 'Pedido insertado correctamente', id: resultado.insertedId })
+		res.status(201).json(resultado.insertedId)
 	} catch (error) {
 		res.status(500).json({ mensaje: 'Error al insertar el pedido', error })
 	}
