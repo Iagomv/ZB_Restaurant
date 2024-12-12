@@ -7,20 +7,23 @@ public class Bebida {
     private String tipo;
     private String precio;
     private String stock;
+    private boolean entregada;
 
-    public Bebida(String nombre, String tipo, String precio, String stock) {
+    public Bebida(String nombre, String tipo, String precio, String stock, boolean entregada) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.precio = precio;
         this.stock = stock;
+        this.entregada = entregada;
     }
 
-    public Bebida(int id_bebida, String nombre, String tipo, String precio, String stock) {
+    public Bebida(int id_bebida, String nombre, String tipo, String precio, String stock, boolean entregada) {
         this.id_bebida = id_bebida;
         this.nombre = nombre;
         this.tipo = tipo;
         this.precio = precio;
         this.stock = stock;
+        this.entregada = entregada;
     }
 
     public String[] getParametrosBebida() {
@@ -65,6 +68,22 @@ public class Bebida {
 
     public void setStock(String stock) {
         this.stock = stock;
+    }
+
+    public int getId_bebida() {
+        return id_bebida;
+    }
+
+    public void setId_bebida(int id_bebida) {
+        this.id_bebida = id_bebida;
+    }
+
+    public boolean isEntregada() {
+        return entregada;
+    }
+
+    public void setEntregada(boolean entregada) {
+        this.entregada = entregada;
     }
 
     @Override

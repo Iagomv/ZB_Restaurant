@@ -1,7 +1,6 @@
 package API;
 
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -51,4 +50,108 @@ public class InsertarAPI {
         }
         return null;
     }
+
+    // Método para actualizar el estado de un pedido
+    public boolean actualizarEstadoPedido(String id, String nuevoEstado) {
+        try {
+            // Validar que el estado es válido
+            String[] estadosValidos = { "pendiente", "entrante", "primero", "postre", "cancelado" };
+            boolean estadoValido = false;
+            for (String estado : estadosValidos) {
+                if (estado.equals(nuevoEstado)) {
+                    estadoValido = true;
+                    break;
+                }
+            }
+
+            if (!estadoValido) {
+                System.err.println("Estado inválido: " + nuevoEstado);
+                return false;
+            }
+
+            // Crear el JSON con el nuevo estado
+            String json = objectMapper.writeValueAsString(new EstadoPedido(nuevoEstado));
+
+            // Construir la solicitud HTTP
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL + "/" + id)) // URL con el ID del pedido
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            // Enviar la solicitud
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Manejar la respuesta
+            if (response.statusCode() == 200) {
+                System.out.println("Estado del pedido actualizado correctamente.");
+                return true;
+            } else if (response.statusCode() == 404) {
+                System.err.println("Pedido no encontrado: " + id);
+            } else {
+                System.err.println("Error al actualizar el estado del pedido. Código: " + response.statusCode());
+                System.err.println("Respuesta: " + response.body());
+            }
+        } catch (Exception e) {
+            System.err.println("Error al actualizar el estado del pedido: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Método para actualizar un pedido completo por ID
+    public boolean actualizarPedido(String id, Pedido nuevoPedido) {
+        try {
+            // Convertir el nuevo pedido a JSON
+            PedidoToJSON pedidoToJSON = new PedidoToJSON();
+            String json = pedidoToJSON.convertirPedidoAJson(nuevoPedido);
+
+            if (json != null) {
+                // Construir la solicitud HTTP
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(API_URL + "/" + id)) // URL con el ID del pedido
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+
+                // Enviar la solicitud
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                // Manejar la respuesta
+                if (response.statusCode() == 200) {
+                    System.out.println("Pedido actualizado correctamente. Respuesta: " + response.body());
+                    return true;
+                } else if (response.statusCode() == 404) {
+                    System.err.println("Pedido no encontrado: " + id);
+                } else {
+                    System.err.println("Error al actualizar el pedido. Código: " + response.statusCode());
+                    System.err.println("Respuesta: " + response.body());
+                }
+            } else {
+                System.err.println("No se pudo convertir el nuevo pedido a JSON.");
+            }
+        } catch (Exception e) {
+            System.err.println("Error al actualizar el pedido: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Clase auxiliar para convertir el estado a JSON
+    private static class EstadoPedido {
+        private String estado;
+
+        public EstadoPedido(String estado) {
+            this.estado = estado;
+        }
+
+        public String getEstado() {
+            return estado;
+        }
+
+        public void setEstado(String estado) {
+            this.estado = estado;
+        }
+    }
+
 }

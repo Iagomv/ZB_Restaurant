@@ -1,23 +1,27 @@
 package Threads;
 
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-
+import API.*;
 import Model.Camarero;
+import Model.Cliente;
 import Model.Pedido;
+import Model.Tarea;
 import Static.Pedidos;
 
 public class CamareroThread implements Runnable {
 
     // Semáforo para sincronizar el acceso del camarero a las acciones
     private Semaphore semaforo;
-
-    // Referencia al camarero
+    ArrayList<Tarea> listaTareas = new ArrayList();
+    InsertarAPI api = new InsertarAPI();
+    private int tiempoTomarPedido = 2; // Tiempo estimado en segundos para tomar un pedido
+    private int tiempoLlevarBebida = 2; // Tiempo estimado en segundos para levar una bebida
+    private int tiempoLlevarPlato = 4; // Tiempo estimado en segundos para llevar el plato
     private Camarero camarero;
 
     public CamareroThread(Camarero camarero) {
         this.camarero = camarero;
-        // Inicializamos el semáforo con un permiso de 1 para que solo un hilo pueda
-        // ejecutarlo a la vez
         this.semaforo = new Semaphore(1);
     }
 
@@ -27,18 +31,39 @@ public class CamareroThread implements Runnable {
     }
 
     // Método que contiene la lógica de las acciones del camarero
-    private void realizarAccionesCamarero() {
-        // Ejemplo de acciones que el camarero podría realizar
-        // Simula que el camarero hace una tarea, como tomar un pedido
-        tiempoEstimado(3); // Simula el tiempo que tarda el camarero en tomar un pedido
+    private synchronized void realizarAccionesCamarero() {
+        while (true) {
+            try {
+                // Esperar mientras no haya tareas
+                synchronized (this) {
+                    while (listaTareas.isEmpty()) {
+                        wait();
+                    }
+                }
+                semaforo.acquire();
+                Tarea tarea = listaTareas.remove(0);
+                semaforo.release();
 
-        // Crear una comanda para el pedido que el camarero acaba de recibir
-        crearComanda(camarero.getPedido());
-
-        // Otra acción que podría hacer el camarero, como llevar el pedido a la cocina o
-        // servir la comida
-        // Aquí agregamos un ejemplo de cómo podrían continuar las acciones.
-        // llevarComandaCocina(camarero.getPedido()); // Comentado por ejemplo
+                switch (tarea.getTipoTarea()) {
+                    case "tomarPedido":
+                        tomarPedido(tarea.getCliente(), tarea.getPedido());
+                        break;
+                    case "llevarBebida":
+                        llevarAMesa(tarea.getPedido(), true);
+                        break;
+                    case "llevarPlato":
+                        llevarAMesa(tarea.getPedido(), false);
+                        break;
+                    case "actualizarEstado":
+                        actualizarEstadoPedido(tarea.getPedido());
+                        break;
+                    default:
+                        System.err.println("Tipo de tarea desconocido: " + tarea.getTipoTarea());
+                }
+            } catch (InterruptedException e) {
+                System.err.println("Error en el manejo de tareas: " + e.getMessage());
+            }
+        }
     }
 
     // Simula el tiempo estimado que tarda en realizarse una acción
@@ -51,16 +76,34 @@ public class CamareroThread implements Runnable {
         }
     }
 
-    // Método para crear una comanda para el pedido del camarero
-    public void crearComanda(Pedido pedido) {
-        Pedidos.pedidos.add(pedido);
-        Pedidos.entrantes.add(pedido.getEntrante());
-        Pedidos.primeros.add(pedido.getPrimero());
-        Pedidos.postres.add(pedido.getPostre());
-        Pedidos.bebidas.add(pedido.getBebidaPedido());
+    // Métodos para realizar las acciones del camarero
+    public void tomarPedido(Cliente cliente, Pedido pedido) {
+        tiempoEstimado(tiempoTomarPedido);
+        Pedido pedidoActualizadoConID = api.enviarPedido(pedido);
+        pedido = pedidoActualizadoConID;
     }
 
-    // Aquí puedes agregar otros métodos si el camarero necesita realizar más
-    // acciones
-    // Ejemplo: llevarComandaCocina, servirComida, etc.
+    public void llevarAMesa(Pedido pedido, boolean esBebida) {
+        tiempoEstimado(esBebida ? tiempoLlevarBebida : tiempoLlevarPlato);
+    }
+
+    public boolean comprobarEstadoPedido(Pedido pedido) {
+        if (pedido.getBebidaPedido().isEntregada() && pedido.getEntrante().isEntregado()
+                && pedido.getPrimero().isEntregado() && pedido.getPostre().isEntregado()) {
+            pedido.setEstado("Completado");
+            return true;
+        }
+        return false;
+    }
+
+    public void actualizarEstadoPedido(Pedido pedido) {
+        api.actualizarEstadoPedido(pedido.getIdPedido(), pedido.getEstado());
+    }
+
+    // Nuevas Tareas
+    public synchronized void agregarTarea(Tarea tarea) {
+        listaTareas.add(tarea);
+        notify(); // Despertar el hilo cuando se agrega una nueva tarea
+    }
+
 }

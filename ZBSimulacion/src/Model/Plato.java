@@ -7,20 +7,23 @@ public class Plato {
     private String tipo;
     private String precio;
     private String stock;
+    private boolean entregado;
 
-    public Plato(String nombre, String tipo, String precio, String stock) {
+    public Plato(String nombre, String tipo, String precio, String stock, boolean entregado) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.precio = precio;
         this.stock = stock;
+        this.entregado = entregado;
     }
 
-    public Plato(int id, String nombre, String tipo, String precio, String stock) {
+    public Plato(int id, String nombre, String tipo, String precio, String stock, boolean entregado) {
         this.id = id;
         this.nombre = nombre;
         this.tipo = tipo;
         this.precio = precio;
         this.stock = stock;
+        this.entregado = entregado;
     }
 
     public String[] getParametrosComida() {
@@ -65,6 +68,14 @@ public class Plato {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isEntregado() {
+        return entregado;
+    }
+
+    public void setEntregado(boolean entregado) {
+        this.entregado = entregado;
     }
 
     @Override

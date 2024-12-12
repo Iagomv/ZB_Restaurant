@@ -1,14 +1,6 @@
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Random;
-
-import javax.swing.text.html.CSS;
-
-import Handlers.Instanciador;
-import Model.CSala;
 import Model.Cliente;
-import Model.Plato;
 import Static.Carta;
+import Static.Hilos;
 import Static.Personal;
 import Threads.CamareroThread;
 import Threads.ClienteThread;
@@ -75,7 +67,7 @@ public class Simulacion {
 
     private void generarHilos() {
         for (int i = 0; i < Personal.camareros.length; i++) {
-            CamareroThread camareroThread = new CamareroThread(Personal.camareros[i]);
+            Hilos.hilosCamareros.put(Personal.camareros[i], new CamareroThread(Personal.camareros[i]));
         }
         for (int i = 0; i < Personal.cocineros.length; i++) {
             // new Thread(Personal.cocineros[i]).start();
