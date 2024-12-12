@@ -67,4 +67,10 @@ public class Plato {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "Plato [id=" + id + ", nombre=" + nombre + ", tipo=" + tipo + ", precio=" + precio + ", stock=" + stock
+                + "]";
+    }
+
 }

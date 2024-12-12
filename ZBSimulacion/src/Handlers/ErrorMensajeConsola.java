@@ -1,4 +1,4 @@
-package Helpers;
+package Handlers;
 
 public class ErrorMensajeConsola {
     public static void error(Exception error, String mensaje) {

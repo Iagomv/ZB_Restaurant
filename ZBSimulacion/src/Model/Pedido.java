@@ -9,6 +9,7 @@ public class Pedido {
     private Plato[] platosPedido;
     private Mesa mesa;
     private Cliente cliente;
+    private String precio;
 
     public Pedido(int idPedido, String estado, Bebida bebidaPedido, Plato[] platosPedido, Mesa mesa, Cliente cliente) {
         this.idPedido = idPedido;
@@ -17,6 +18,7 @@ public class Pedido {
         this.platosPedido = platosPedido;
         this.mesa = mesa;
         this.cliente = cliente;
+        this.precio = calcularPrecioPedido();
     }
 
     public int getIdPedido() {
@@ -65,6 +67,15 @@ public class Pedido {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public String calcularPrecioPedido() {
+        double precioTotal = 0;
+        for (Plato plato : platosPedido) {
+            precioTotal += Double.parseDouble(plato.getPrecio());
+        }
+        precioTotal += Double.parseDouble(bebidaPedido.getPrecio());
+        return String.valueOf(precioTotal);
     }
 
     @Override

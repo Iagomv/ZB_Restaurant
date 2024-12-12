@@ -1,5 +1,8 @@
 package Threads;
 
+import java.util.logging.Handler;
+
+import Handlers.ProcessHandler;
 import Model.Cliente;
 import Model.Mesa;
 import Model.Pedido;
@@ -14,6 +17,7 @@ public class ClienteThread extends Cliente implements Runnable {
 
     public void run() {
         hablarConCamareroSala();
+        realizarPedido();
     }
 
     // Adquirimos semaforo y obtenemos la mesa
@@ -23,6 +27,9 @@ public class ClienteThread extends Cliente implements Runnable {
         }
     }
 
-    // Realizar pedido
+    private void realizarPedido() {
+        ProcessHandler ph = new ProcessHandler();
+        String[] elecciones = ph.elegirPlatos();
+    }
 
 }

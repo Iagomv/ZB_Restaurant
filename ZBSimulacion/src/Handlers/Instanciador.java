@@ -1,4 +1,4 @@
-package Helpers;
+package Handlers;
 
 import java.util.Random;
 import Model.*;

@@ -3,9 +3,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.text.html.CSS;
-import Helpers.Instanciador;
+
+import Handlers.Instanciador;
 import Model.CSala;
 import Model.Cliente;
+import Model.Plato;
+import Static.Carta;
 import Static.Personal;
 import Threads.ClienteThread;
 
@@ -16,11 +19,13 @@ public class Simulacion {
     private int cantidadMesas;
     private int numeroDeCliente;
 
-    Helpers.Instanciador getInstancia = new Helpers.Instanciador();
+    Handlers.Instanciador getInstancia = new Handlers.Instanciador();
+    Handlers.CartaHandler cartaHandler = new Handlers.CartaHandler();
 
     public Simulacion() {
         setVariables();
         generarInstanciasRestaurante();
+        generarCarta();
 
         // Bucle principal
         while (true) {
@@ -54,11 +59,16 @@ public class Simulacion {
                 Personal.sommelier, cantidadMesas);
     }
 
-    @Override
-    public String toString() {
-        return "Simulacion [tiempoEntreClientes=" + tiempoEntreClientes + ", cantidadCamareros=" + cantidadCamareros
-                + ", cantidadCocineros=" + cantidadCocineros + ", cantidadMesas=" + cantidadMesas + ", numeroDeCliente="
-                + numeroDeCliente + ", getInstancia=" + getInstancia + "]";
+    private void generarCarta() {
+        Carta.bebidas = cartaHandler.getBebidas();
+        Carta.platosCarta = cartaHandler.getPlatos();
+        Carta.entrantes = cartaHandler.getEntrantes(Carta.platosCarta);
+        Carta.primeros = cartaHandler.getPrimeros(Carta.platosCarta);
+        Carta.postres = cartaHandler.getPostres(Carta.platosCarta);
+        Carta.numeroBebidas = cartaHandler.getNumeroBebidas();
+        Carta.numeroEntrantes = cartaHandler.getNumeroEntrantes();
+        Carta.numeroPrimeros = cartaHandler.getNumeroPrimeros();
+        Carta.numeroPostres = cartaHandler.getNumeroPostres();
     }
 
 }
