@@ -12,7 +12,7 @@ public class CartaHandler {
     Plato[] primeros;
     Plato[] postres;
 
-    Consultas.ConsultasSQL SQL = new Consultas.ConsultasSQL();
+    Sql.ConsultasSQL SQL = new Sql.ConsultasSQL();
 
     public List<Bebida> getBebidas() {
         try {

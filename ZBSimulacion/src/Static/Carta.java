@@ -3,9 +3,9 @@ package Static;
 import java.util.ArrayList;
 import java.util.List;
 
-import Consultas.ConsultasSQL;
 import Model.Bebida;
 import Model.Plato;
+import Sql.ConsultasSQL;
 
 public class Carta {
     public static Plato[] platosCarta;

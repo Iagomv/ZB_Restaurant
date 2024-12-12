@@ -72,6 +72,6 @@ public class Cliente extends Thread {
     @Override
     public String toString() {
         return "Cliente [numeroCliente=" + numeroCliente + ", numeroComensales=" + numeroComensales + ", numeroMesa="
-                + numeroMesa + ", estado=" + estado + ", pedido=" + pedido + "]";
+                + numeroMesa + ", estado=" + estado + ", pedido=" + pedido.getDescripcion() + "]";
     }
 }

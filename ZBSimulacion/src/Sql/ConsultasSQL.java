@@ -1,4 +1,4 @@
-package Consultas;
+package Sql;
 
 import java.lang.Thread.State;
 import java.net.MalformedURLException;

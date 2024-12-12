@@ -1,5 +1,12 @@
 {
-  "java.project.sourcePaths": ["src"],
-  "java.project.outputPath": "bin",
-  "java.project.referencedLibraries": ["lib/**/*.jar", "libjson-simple-1.1.1.jar", "lib/mysql-connector-j-9.0.0.jar"]
+	"java.project.sourcePaths": ["src"],
+	"java.project.outputPath": "bin",
+	"java.project.referencedLibraries": [
+		"lib/**/*.jar",
+		"libjson-simple-1.1.1.jar",
+		"lib/mysql-connector-j-9.0.0.jar",
+		"lib/jackson-core-2.18.0.jar",
+		"lib/jackson-databind-2.18.0.jar",
+		"lib/jackson-annotations-2.18.0.jar"
+	]
 }

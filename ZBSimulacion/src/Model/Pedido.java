@@ -6,16 +6,24 @@ public class Pedido {
     private int idPedido;
     private String estado;
     private Bebida bebidaPedido;
-    private Plato[] platosPedido;
+    private Plato entrante;
+    private Plato primero;
+    private Plato postre;
+
     private Mesa mesa;
+
     private Cliente cliente;
     private String precio;
 
-    public Pedido(int idPedido, String estado, Bebida bebidaPedido, Plato[] platosPedido, Mesa mesa, Cliente cliente) {
-        this.idPedido = idPedido;
+    public Pedido(Integer idPedido, String estado, Bebida bebidaPedido, Plato entrante, Plato primero, Plato postre,
+            Mesa mesa, Cliente cliente) {
+
+        this.idPedido = idPedido == null ? null : idPedido;
         this.estado = estado;
         this.bebidaPedido = bebidaPedido;
-        this.platosPedido = platosPedido;
+        this.entrante = entrante;
+        this.primero = primero;
+        this.postre = postre;
         this.mesa = mesa;
         this.cliente = cliente;
         this.precio = calcularPrecioPedido();
@@ -45,14 +53,6 @@ public class Pedido {
         this.bebidaPedido = bebidaPedido;
     }
 
-    public Plato[] getPlatosPedido() {
-        return platosPedido;
-    }
-
-    public void setPlatosPedido(Plato[] platosPedido) {
-        this.platosPedido = platosPedido;
-    }
-
     public Mesa getMesa() {
         return mesa;
     }
@@ -69,18 +69,57 @@ public class Pedido {
         this.cliente = cliente;
     }
 
+    public Plato getEntrante() {
+        return entrante;
+    }
+
+    public void setEntrante(Plato entrante) {
+        this.entrante = entrante;
+    }
+
+    public Plato getPrimero() {
+        return primero;
+    }
+
+    public void setPrimero(Plato primero) {
+        this.primero = primero;
+    }
+
+    public Plato getPostre() {
+        return postre;
+    }
+
+    public void setPostre(Plato postre) {
+        this.postre = postre;
+    }
+
+    public String getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(String precio) {
+        this.precio = precio;
+    }
+
     public String calcularPrecioPedido() {
         double precioTotal = 0;
-        for (Plato plato : platosPedido) {
-            precioTotal += Double.parseDouble(plato.getPrecio());
-        }
-        precioTotal += Double.parseDouble(bebidaPedido.getPrecio());
+        double precioEntrante = Double.parseDouble(entrante.getPrecio().replace(",", "."));
+        double precioPrimero = Double.parseDouble(primero.getPrecio().replace(",", "."));
+        double precioPostre = Double.parseDouble(postre.getPrecio().replace(",", "."));
+        double precioBebida = Double.parseDouble(bebidaPedido.getPrecio().replace(",", "."));
+
+        precioTotal = precioEntrante + precioPrimero + precioPostre + precioBebida;
         return String.valueOf(precioTotal);
+    }
+
+    public String getDescripcion() {
+        return "Pedido [id=" + idPedido + ", bebida=" + bebidaPedido + ", estado=" + estado + "]";
     }
 
     @Override
     public String toString() {
-        return "Pedido [idPedido=" + idPedido + ", estado=" + estado + ", bebidaPedido=" + bebidaPedido
-                + ", platosPedido=" + Arrays.toString(platosPedido) + ", mesa=" + mesa + ", cliente=" + cliente + "]";
+        return "Pedido [idPedido=" + idPedido + ", estado=" + estado + ", bebidaPedido=" + bebidaPedido + ", entrante="
+                + entrante + ", primero=" + primero + ", postre=" + postre + ", mesa=" + mesa + ", cliente=" + cliente
+                + ", precio=" + precio + "]";
     }
 }
