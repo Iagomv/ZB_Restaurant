@@ -17,8 +17,6 @@ public class Mesa {
         this.pedido = pedido;
         this.camareroAsignado = camareroAsignado;
         this.cliente = cliente;
-        // System.out.println("Mesa " + this.numeroMesa + " creada, con capacidad de " +
-        // this.capacidadMesa + " comensales");
     }
 
     public int getNumeroMesa() {

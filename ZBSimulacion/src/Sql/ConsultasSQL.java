@@ -74,7 +74,7 @@ public class ConsultasSQL {
                 String precio = rs.getString("precio");
                 String stock = rs.getString("stock");
 
-                bebidas.add(new Bebida(id, nombre, tipo, precio, stock, false));
+                bebidas.add(new Bebida(id, nombre, tipo, precio, stock, "pendiente"));
             }
         }
         return bebidas;
@@ -94,7 +94,7 @@ public class ConsultasSQL {
                 String precio = rs.getString("precio");
                 String stock = rs.getString("stock");
 
-                platos.add(new Plato(id, nombre, tipo, precio, stock, false));
+                platos.add(new Plato(id, nombre, tipo, precio, stock, "pendiente"));
             }
         }
         return platos;
@@ -113,7 +113,7 @@ public class ConsultasSQL {
                     String tipo = rs.getString("tipo");
                     String precio = rs.getString("precio");
                     String stock = rs.getString("stock");
-                    bebida = new Bebida(id, nombre, tipo, precio, stock, false);
+                    bebida = new Bebida(id, nombre, tipo, precio, stock, "pendiente");
                 }
             }
         }

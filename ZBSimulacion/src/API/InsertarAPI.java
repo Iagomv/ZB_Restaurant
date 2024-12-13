@@ -33,7 +33,6 @@ public class InsertarAPI {
 
                 // Manejar la respuesta
                 if (response.statusCode() == 201) {
-                    System.out.println("Llamada api exitosa. El camarero crea la comanda: " + response.body());
                     pedido.setIdPedido(response.body());
                     return pedido;
                 } else {
@@ -102,30 +101,29 @@ public class InsertarAPI {
     // Método para actualizar un pedido completo por ID
     public boolean actualizarPedido(String id, Pedido nuevoPedido) {
         try {
-            // Convertir el nuevo pedido a JSON
             PedidoToJSON pedidoToJSON = new PedidoToJSON();
             String json = pedidoToJSON.convertirPedidoAJson(nuevoPedido);
 
             if (json != null) {
-                // Construir la solicitud HTTP
+                String cleanId = id.replace("\"", "");
+
+                // System.out.println("JSON enviado: " + json);
+                System.out.println("URL construida: " + API_URL + "/" + cleanId);
+
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(API_URL + "/" + id)) // URL con el ID del pedido
+                        .uri(URI.create(API_URL + "/" + cleanId))
                         .header("Content-Type", "application/json")
                         .PUT(HttpRequest.BodyPublishers.ofString(json))
                         .build();
 
-                // Enviar la solicitud
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                // Manejar la respuesta
                 if (response.statusCode() == 200) {
                     System.out.println("Pedido actualizado correctamente. Respuesta: " + response.body());
                     return true;
-                } else if (response.statusCode() == 404) {
-                    System.err.println("Pedido no encontrado: " + id);
                 } else {
                     System.err.println("Error al actualizar el pedido. Código: " + response.statusCode());
-                    System.err.println("Respuesta: " + response.body());
+                    System.err.println("Respuesta del servidor: " + response.body());
                 }
             } else {
                 System.err.println("No se pudo convertir el nuevo pedido a JSON.");

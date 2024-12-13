@@ -30,6 +30,8 @@ public class PedidoToJSON {
         bebidaMap.put("tipo", bebida.getTipo());
         bebidaMap.put("precio", bebida.getPrecio());
         bebidaMap.put("stock", bebida.getStock());
+        bebidaMap.put("estado", bebida.getEstado());
+
         pedidoMap.put("bebida", bebidaMap);
 
         // Agregar platos: entrante, primero, postre
@@ -64,6 +66,7 @@ public class PedidoToJSON {
         platoMap.put("nombre", plato.getNombre());
         platoMap.put("tipo", plato.getTipo());
         platoMap.put("precio", plato.getPrecio());
+        platoMap.put("estado", plato.getEstado());
         platoMap.put("stock", plato.getStock());
         return platoMap;
     }

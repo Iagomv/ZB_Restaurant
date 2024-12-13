@@ -12,6 +12,9 @@ router.get('/:id', pedidosController.obtenerPedidoPorId)
 router.post('/', pedidosController.insertarPedido)
 
 // Ruta para actualizar el estado de un pedido por su ID
-router.put('/:id', pedidosController.actualizarEstadoPedido)
+router.put('/:id/estado', pedidosController.actualizarEstadoPedido)
+
+// Ruta para actualizar el estado de un pedido por su ID
+router.put('/:id', pedidosController.actualizarPedido)
 
 module.exports = router // Exportamos las rutas para que se usen en el archivo principal

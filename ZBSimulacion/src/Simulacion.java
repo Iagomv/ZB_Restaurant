@@ -1,9 +1,11 @@
 import Model.Cliente;
+import Model.Cocinero;
 import Static.Carta;
 import Static.Hilos;
 import Static.Personal;
 import Threads.CamareroThread;
-import Threads.ClienteThread;
+import Threads.ClienteEntidad;
+import Threads.CocineroThread;
 
 public class Simulacion {
     private int tiempoEntreClientes;
@@ -26,7 +28,7 @@ public class Simulacion {
             Personal.clientes.add(getInstancia.generarCliente(numeroDeCliente, tiempoEntreClientes, "En espera"));
             numeroDeCliente++;
             Cliente cliente = Personal.clientes.remove(0);
-            new Thread(new ClienteThread(cliente)).start();
+            new ClienteEntidad(cliente);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -67,10 +69,15 @@ public class Simulacion {
 
     private void generarHilos() {
         for (int i = 0; i < Personal.camareros.length; i++) {
-            Hilos.hilosCamareros.put(Personal.camareros[i], new CamareroThread(Personal.camareros[i]));
+            CamareroThread camareroThread = new CamareroThread(Personal.camareros[i]);
+            new Thread(camareroThread).start();
+            Hilos.hilosCamareros.put(Personal.camareros[i], camareroThread);
+
         }
         for (int i = 0; i < Personal.cocineros.length; i++) {
-            // new Thread(Personal.cocineros[i]).start();
+            CocineroThread cocineroThread = new CocineroThread(Personal.cocineros[i]);
+            new Thread(cocineroThread).start();
+            Hilos.hilosCocineros.add(cocineroThread);
         }
     }
 }

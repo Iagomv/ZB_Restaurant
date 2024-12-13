@@ -115,6 +115,10 @@ public class Pedido {
         this.precio = precio;
     }
 
+    public Plato[] getPlatos() {
+        return new Plato[] { entrante, primero, postre };
+    }
+
     public String calcularPrecioPedido() {
         double precioTotal = 0;
         double precioEntrante = Double.parseDouble(entrante.getPrecio().replace(",", "."));

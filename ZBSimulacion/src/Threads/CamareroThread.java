@@ -1,109 +1,123 @@
 package Threads;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 import API.*;
+import Model.Bebida;
 import Model.Camarero;
 import Model.Cliente;
 import Model.Pedido;
+import Model.Plato;
 import Model.Tarea;
-import Static.Pedidos;
+import Model.TareaCocina;
+import Static.Hilos;
 
 public class CamareroThread implements Runnable {
 
-    // Semáforo para sincronizar el acceso del camarero a las acciones
-    private Semaphore semaforo;
-    ArrayList<Tarea> listaTareas = new ArrayList();
-    InsertarAPI api = new InsertarAPI();
-    private int tiempoTomarPedido = 2; // Tiempo estimado en segundos para tomar un pedido
-    private int tiempoLlevarBebida = 2; // Tiempo estimado en segundos para levar una bebida
-    private int tiempoLlevarPlato = 4; // Tiempo estimado en segundos para llevar el plato
+    private ArrayList<Tarea> listaTareas = new ArrayList<>();
+    private InsertarAPI api = new InsertarAPI();
+    private final int tiempoTomarPedido = 2; // Tiempo estimado en segundos para tomar un pedido
+    private final int tiempoLlevarBebida = 2; // Tiempo estimado en segundos para llevar una bebida
+    private final int tiempoLlevarPlato = 1; // Tiempo estimado en segundos para llevar el plato
     private Camarero camarero;
 
     public CamareroThread(Camarero camarero) {
         this.camarero = camarero;
-        this.semaforo = new Semaphore(1);
     }
 
     @Override
     public void run() {
-        realizarAccionesCamarero();
-    }
-
-    // Método que contiene la lógica de las acciones del camarero
-    private synchronized void realizarAccionesCamarero() {
         while (true) {
             try {
-                // Esperar mientras no haya tareas
-                synchronized (this) {
+                Tarea tarea;
+                // Espera hasta que haya tareas en la lista
+                synchronized (listaTareas) {
                     while (listaTareas.isEmpty()) {
-                        wait();
+                        listaTareas.wait();
                     }
+                    // Toma la primera tarea
+                    tarea = listaTareas.remove(0);
                 }
-                semaforo.acquire();
-                Tarea tarea = listaTareas.remove(0);
-                semaforo.release();
+                // Procesar la tarea fuera del bloque sincronizado
+                procesarTarea(tarea);
 
-                switch (tarea.getTipoTarea()) {
-                    case "tomarPedido":
-                        tomarPedido(tarea.getCliente(), tarea.getPedido());
-                        break;
-                    case "llevarBebida":
-                        llevarAMesa(tarea.getPedido(), true);
-                        break;
-                    case "llevarPlato":
-                        llevarAMesa(tarea.getPedido(), false);
-                        break;
-                    case "actualizarEstado":
-                        actualizarEstadoPedido(tarea.getPedido());
-                        break;
-                    default:
-                        System.err.println("Tipo de tarea desconocido: " + tarea.getTipoTarea());
-                }
             } catch (InterruptedException e) {
-                System.err.println("Error en el manejo de tareas: " + e.getMessage());
+                System.err.println("Error en el hilo del camarero: " + e.getMessage());
             }
         }
     }
 
-    // Simula el tiempo estimado que tarda en realizarse una acción
-    private void tiempoEstimado(int tiempo) {
-        try {
-            Thread.sleep(tiempo * 1000); // El tiempo de espera está en segundos
-        } catch (InterruptedException e) {
-            System.err.println("Interruted Exception en CamareroThread");
-            e.printStackTrace();
+    private void procesarTarea(Tarea tarea) {
+        switch (tarea.getTipoTarea()) {
+            case "tomarPedido":
+                tomarPedido(tarea.getCliente(), tarea.getPedido());
+                break;
+            case "llevarBebida":
+                llevarAMesa(tarea.getBebida());
+                break;
+            case "llevarPlato":
+                llevarAMesa(tarea.getPedido(), tarea.getPlato());
+                break;
+            case "actualizarEstado":
+                actualizarEstadoPedido(tarea.getPedido());
+                break;
+            default:
+                System.err.println("Tipo de tarea desconocido: " + tarea.getTipoTarea());
         }
     }
 
-    // Métodos para realizar las acciones del camarero
-    public void tomarPedido(Cliente cliente, Pedido pedido) {
+    private void tomarPedido(Cliente cliente, Pedido pedido) {
         tiempoEstimado(tiempoTomarPedido);
         Pedido pedidoActualizadoConID = api.enviarPedido(pedido);
+        pedidoActualizadoConID.setIdPedido(pedidoActualizadoConID.getIdPedido().replace("\"", ""));
         pedido = pedidoActualizadoConID;
+        avisarCocinero(pedido);
     }
 
-    public void llevarAMesa(Pedido pedido, boolean esBebida) {
-        tiempoEstimado(esBebida ? tiempoLlevarBebida : tiempoLlevarPlato);
-    }
+    private void avisarCocinero(Pedido pedido) {
+        int cocineroAsignado = (this.camarero.getIdCamarero() > 1) ? 1 : 0;
+        CocineroThread cocineroThread = Hilos.hilosCocineros.get(cocineroAsignado);
 
-    public boolean comprobarEstadoPedido(Pedido pedido) {
-        if (pedido.getBebidaPedido().isEntregada() && pedido.getEntrante().isEntregado()
-                && pedido.getPrimero().isEntregado() && pedido.getPostre().isEntregado()) {
-            pedido.setEstado("Completado");
-            return true;
+        synchronized (cocineroThread) {
+            cocineroThread.agregarTarea(new TareaCocina(pedido));
+            cocineroThread.notify(); // Notifica al cocinero
         }
-        return false;
     }
 
-    public void actualizarEstadoPedido(Pedido pedido) {
+    private void llevarAMesa(Pedido pedido, Plato plato) {
+        System.out.println("El camarero " + camarero.getIdCamarero() + " lleva el plato: " + plato.getNombre());
+        tiempoEstimado(tiempoLlevarPlato);
+        plato.setEstado("servido");
+        api.actualizarPedido(pedido.getIdPedido(), pedido);
+    }
+
+    private void llevarAMesa(Bebida bebida) {
+        tiempoEstimado(tiempoLlevarBebida);
+    }
+
+    private void actualizarEstadoPedido(Pedido pedido) {
         api.actualizarEstadoPedido(pedido.getIdPedido(), pedido.getEstado());
     }
 
-    // Nuevas Tareas
     public synchronized void agregarTarea(Tarea tarea) {
-        listaTareas.add(tarea);
-        notify(); // Despertar el hilo cuando se agrega una nueva tarea
+        synchronized (listaTareas) {
+            listaTareas.add(tarea);
+            listaTareas.notify(); // Despierta el hilo cuando se agrega una nueva tarea
+        }
     }
 
+    private void tiempoEstimado(int tiempo) {
+        try {
+            Thread.sleep(tiempo * 1000);
+        } catch (InterruptedException e) {
+            System.err.println("Error en tiempo estimado: " + e.getMessage());
+        }
+    }
+
+    public Camarero getCamarero() {
+        return camarero;
+    }
+
+    public void setCamarero(Camarero camarero) {
+        this.camarero = camarero;
+    }
 }

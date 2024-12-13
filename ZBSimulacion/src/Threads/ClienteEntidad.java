@@ -4,31 +4,44 @@ import API.InsertarAPI;
 import Handlers.PedidoHandler;
 import Handlers.PedidoToJSON;
 import Handlers.ProcessHandler;
+import Model.Camarero;
 import Model.Cliente;
 import Model.Mesa;
 import Model.Pedido;
+import Model.Tarea;
+import Static.Hilos;
 import Static.Personal;
 
-public class ClienteThread extends Cliente implements Runnable {
+public class ClienteEntidad extends Cliente implements Runnable {
     PedidoHandler pedidoHandler = new PedidoHandler();
     InsertarAPI APIinsert = new InsertarAPI();
+    Camarero camarero;
+    CamareroThread camareroThread;
 
-    public ClienteThread(Cliente cliente) {
+    public ClienteEntidad(Cliente cliente) {
         super(cliente.getNumeroCliente(), cliente.getNumeroComensales(), cliente.getNumeroMesa(), cliente.getEstado(),
                 cliente.getPedido(), cliente.getMesa());
-    }
-
-    // !Método principal del hilo */
-    public void run() {
         if (pedirMesaCamareroSala()) {
+            // System.out.println(
+            // "\tEl cliente " + this.getNumeroCliente() + " ha ocupado la mesa "
+            // + this.getMesa().getNumeroMesa());
+            presentacionCamarero();
             realizarPedido();
-            Pedido pedidoActualizadoConID = APIinsert.enviarPedido(this.getPedido());
-            this.setPedido(pedidoActualizadoConID);
-
-            // TODO modificar estado de pedido --> En cola?
+            camareroTomaPedido();
 
             // Camarero.start();
         }
+
+    }
+
+    // Se agrega la tarea de tomar pedido al camarero
+    private void camareroTomaPedido() {
+        camareroThread.agregarTarea(new Tarea("tomarPedido", this, this.getPedido()));
+    }
+
+    private void presentacionCamarero() {
+        this.camarero = this.getMesa().getCamareroAsignado();
+        this.camareroThread = Hilos.hilosCamareros.get(this.camarero);
     }
 
     // Adquirimos semaforo y obtenemos la mesa
@@ -52,7 +65,4 @@ public class ClienteThread extends Cliente implements Runnable {
         this.setPedido(pedido);
     }
 
-    private void actualizarEstadoPedido(String estado) {
-        this.getPedido().setEstado(estado);
-    }
 }
