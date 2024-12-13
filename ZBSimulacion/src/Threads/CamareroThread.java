@@ -10,6 +10,7 @@ import Model.Plato;
 import Model.Tarea;
 import Model.TareaCocina;
 import Static.Hilos;
+import Static.Personal;
 
 public class CamareroThread implements Runnable {
 
@@ -18,6 +19,10 @@ public class CamareroThread implements Runnable {
     private final int tiempoTomarPedido = 2; // Tiempo estimado en segundos para tomar un pedido
     private final int tiempoLlevarBebida = 2; // Tiempo estimado en segundos para llevar una bebida
     private final int tiempoLlevarPlato = 1; // Tiempo estimado en segundos para llevar el plato
+    private final int tiempoCobrarPedido = 1; // Tiempo estimado en segundos para llevar el plato
+    private String estadoServido = "servido";
+    private String estadoCobrado = "cobrado";
+
     private Camarero camarero;
 
     public CamareroThread(Camarero camarero) {
@@ -57,6 +62,9 @@ public class CamareroThread implements Runnable {
             case "llevarPlato":
                 llevarAMesa(tarea.getPedido(), tarea.getPlato());
                 break;
+            case "cobrarPedido":
+                cobrarPedido(tarea.getPedido());
+                break;
             case "actualizarEstado":
                 actualizarEstadoPedido(tarea.getPedido());
                 break;
@@ -73,6 +81,31 @@ public class CamareroThread implements Runnable {
         avisarCocinero(pedido);
     }
 
+    private void cobrarPedido(Pedido pedido) {
+        tiempoEstimado(tiempoCobrarPedido);
+        pedido.setEstado(estadoCobrado);
+        api.actualizarPedido(pedido.getIdPedido(), pedido);
+
+        System.out.println("Cobrando pedido");
+        limpiarMesa(pedido);
+
+    }
+
+    private void limpiarMesa(Pedido pedido) {
+        pedido.getMesa().limpiarMesa();
+        Personal.cSala.release();
+    }
+
+    // TODO ENTREGAR BEBIDA
+    private boolean pedidoCompleto(Pedido pedido) {
+        // boolean bebidaEntregada =
+        // (pedido.getBebidaPedido().getEstado().equals(estadoServido));
+        boolean entranteEntragado = (pedido.getEntrante().getEstado().equals(estadoServido));
+        boolean primeroEntregado = (pedido.getPrimero().getEstado().equals(estadoServido));
+        boolean postreEntregado = (pedido.getPostre().getEstado().equals(estadoServido));
+        return entranteEntragado && primeroEntregado && postreEntregado;
+    }
+
     private void avisarCocinero(Pedido pedido) {
         int cocineroAsignado = (this.camarero.getIdCamarero() > 1) ? 1 : 0;
         CocineroThread cocineroThread = Hilos.hilosCocineros.get(cocineroAsignado);
@@ -86,7 +119,10 @@ public class CamareroThread implements Runnable {
     private void llevarAMesa(Pedido pedido, Plato plato) {
         System.out.println("El camarero " + camarero.getIdCamarero() + " lleva el plato: " + plato.getNombre());
         tiempoEstimado(tiempoLlevarPlato);
-        plato.setEstado("servido");
+        plato.setEstado(estadoServido);
+        if (pedidoCompleto(pedido)) {
+            cobrarPedido(pedido);
+        }
         api.actualizarPedido(pedido.getIdPedido(), pedido);
     }
 

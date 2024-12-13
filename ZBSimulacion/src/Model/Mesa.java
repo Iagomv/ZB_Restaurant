@@ -19,6 +19,13 @@ public class Mesa {
         this.cliente = cliente;
     }
 
+    public void limpiarMesa() {
+        this.pedido = null;
+        this.cliente = null;
+        this.ocupada = false;
+        this.estadoMesa = "libre";
+    }
+
     public int getNumeroMesa() {
         return numeroMesa;
     }
