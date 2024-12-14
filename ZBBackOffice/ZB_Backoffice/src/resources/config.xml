@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuracion>
+    <conexion>
+        <url>jdbc:mysql://localhost:3306/karbo_imartinez</url>
+        <usuario>root</usuario>
+        <clave></clave>
+    </conexion>
+</configuracion>

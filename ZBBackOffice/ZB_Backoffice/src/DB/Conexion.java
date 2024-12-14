@@ -1,9 +1,15 @@
 package DB;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.io.InputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-//*Clase que establece la conexión con un patrón Singleton */
 public class Conexion {
     // Instancia única
     private static Conexion instance;
@@ -12,10 +18,42 @@ public class Conexion {
     // Constructor privado para evitar la creación de más instancias
     private Conexion() {
         try {
-            // Aquí se inicializa la conexión
+            // Variables para almacenar los datos de conexión
+            String url = "";
+            String usuario = "";
+            String clave = "";
+
+            // Cargar el archivo XML de configuración
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("resources/config.xml");
+
+            // Verificar si el archivo se encuentra
+            if (inputStream == null) {
+                throw new IllegalArgumentException("El archivo config.xml no se encuentra en el classpath.");
+            } else {
+                System.out.println("Archivo config.xml cargado exitosamente.");
+            }
+
+            // Crear el DocumentBuilder y parsear el archivo XML
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(inputStream);
+
+            // Obtener los elementos de conexión del archivo XML
+            NodeList nodeList = document.getElementsByTagName("conexion");
+            if (nodeList.getLength() > 0) {
+                Element conexionElement = (Element) nodeList.item(0);
+
+                // Leer los valores de los elementos XML
+                url = conexionElement.getElementsByTagName("url").item(0).getTextContent();
+                usuario = conexionElement.getElementsByTagName("usuario").item(0).getTextContent();
+                clave = conexionElement.getElementsByTagName("clave").item(0).getTextContent();
+            }
+
+            // Establecer la conexión usando los valores obtenidos
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/karbo_imartinez", "root", "");
-        } catch (ClassNotFoundException | SQLException e) {
+            this.connection = DriverManager.getConnection(url, usuario, clave);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
