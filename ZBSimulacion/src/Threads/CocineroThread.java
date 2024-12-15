@@ -3,11 +3,9 @@ package Threads;
 import java.util.ArrayList;
 import java.util.Random;
 import API.InsertarAPI;
-import Model.Camarero;
 import Model.Cocinero;
 import Model.Pedido;
 import Model.Plato;
-import Model.Tarea;
 import Model.TareaCocina;
 import Static.Estados;
 import Static.Hilos;
@@ -16,16 +14,16 @@ import Static.TiemposEspera;
 public class CocineroThread implements Runnable {
 
     private InsertarAPI api = new InsertarAPI();
-    private int tiempoPrepararPlato = TiemposEspera.tiempoPrepararPlato; // Tiempo estimado en segundos para
-                                                                         // preparar un plato
     private Cocinero cocinero;
     private ArrayList<TareaCocina> listaTareas;
     private final Random random = new Random();
     private String estadoPreparado = Estados.estadoPreparado;
+    private NotificadorCamarero notificador;
 
-    public CocineroThread(Cocinero cocinero) {
+    public CocineroThread(Cocinero cocinero, NotificadorCamarero notificador) {
         this.cocinero = cocinero;
         this.listaTareas = Hilos.listaTareasCocineros;
+        this.notificador = notificador; // Instancia del notificador compartido
     }
 
     @Override
@@ -34,16 +32,12 @@ public class CocineroThread implements Runnable {
             try {
                 TareaCocina tarea;
 
-                // Espera hasta que haya tareas en la lista
                 synchronized (listaTareas) {
                     while (listaTareas.isEmpty()) {
                         listaTareas.wait(); // Espera a que se añadan tareas
                     }
-                    // Toma la primera tarea de la lista
                     tarea = listaTareas.remove(0);
                 }
-
-                // Procesar la tarea fuera del bloque sincronizado
                 procesarTarea(tarea);
 
             } catch (InterruptedException e) {
@@ -59,37 +53,27 @@ public class CocineroThread implements Runnable {
     private void prepararPedido(Pedido pedido) {
         Plato[] platos = pedido.getPlatos();
         for (Plato plato : platos) {
-            cocinarPlato(plato);
-            notificarCamarero(pedido, plato);
+            cocinarPlato(plato, pedido);
+            notificarPedidoActualizado(pedido);
             api.actualizarPedido(pedido.getIdPedido(), pedido);
         }
     }
 
-    private void cocinarPlato(Plato plato) {
+    private void cocinarPlato(Plato plato, Pedido pedido) {
         System.out.println(
-                "Cocinero " + cocinero.getIdCocinero() + " cocinando " + plato.getTipo() + ": " + plato.getNombre());
+                "Cocinero " + cocinero.getIdCocinero() + " cocinando " + plato.getTipo() + ": " + plato.getNombre()
+                        + " para la mesa " + pedido.getMesa().getNumeroMesa());
         tiempoPreparacion(plato);
         actualizarEstadoPlato(plato);
     }
 
-    private void notificarCamarero(Pedido pedido, Plato plato) {
-        Camarero camarero = pedido.getMesa().getCamareroAsignado();
-
-        synchronized (Hilos.hilosCamareros.get(camarero)) {
-            Hilos.hilosCamareros.get(camarero).agregarTarea(new Tarea("llevarPlato", pedido, plato));
-            Hilos.hilosCamareros.get(camarero).notify(); // Notifica al camarero asignado
-        }
-    }
-
     private void actualizarEstadoPlato(Plato plato) {
-        plato.setEstado("preparado");
+        plato.setEstado(estadoPreparado);
+        System.out.println("Plato " + plato.getTipo() + ": " + plato.getNombre() + " preparado.");
     }
 
-    public void agregarTarea(TareaCocina tarea) {
-        synchronized (listaTareas) {
-            listaTareas.add(tarea);
-            listaTareas.notify(); // Notifica a un hilo en espera
-        }
+    private void notificarPedidoActualizado(Pedido pedido) {
+        notificador.agregarPedido(pedido); // Notifica al NotificadorCamarero
     }
 
     private void tiempoPreparacion(Plato plato) {
@@ -103,11 +87,18 @@ public class CocineroThread implements Runnable {
     private int tiempoEstimado(Plato plato) {
         String tipo = plato.getTipo().toLowerCase();
         return switch (tipo) {
-            case "entrante" -> random.nextInt(2, 4);
-            case "primero" -> random.nextInt(4, 6);
-            case "postre" -> random.nextInt(1, 2);
+            case "entrante" -> TiemposEspera.tiempoPrepararEntrante;
+            case "primero" -> TiemposEspera.tiempoPrepararPrimero;
+            case "postre" -> TiemposEspera.tiempoPrepararPostre;
             default -> 1;
         };
+    }
+
+    public void agregarTarea(TareaCocina tarea) {
+        synchronized (listaTareas) {
+            listaTareas.add(tarea);
+            listaTareas.notify();
+        }
     }
 
     public Cocinero getCocinero() {

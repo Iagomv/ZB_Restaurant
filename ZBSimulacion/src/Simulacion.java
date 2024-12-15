@@ -3,9 +3,11 @@ import Model.Cocinero;
 import Static.Carta;
 import Static.Hilos;
 import Static.Personal;
+import Static.TiemposEspera;
 import Threads.CamareroThread;
 import Threads.ClienteEntidad;
 import Threads.CocineroThread;
+import Threads.NotificadorCamarero;
 import Threads.SommelierThread;
 
 public class Simulacion {
@@ -32,6 +34,7 @@ public class Simulacion {
             new ClienteEntidad(cliente);
 
             try {
+                System.out.println("dormir");
                 Thread.sleep(tiempoEntreClientes * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -40,7 +43,7 @@ public class Simulacion {
     }
 
     private void setVariables() {
-        this.tiempoEntreClientes = 5;
+        this.tiempoEntreClientes = TiemposEspera.tiempoEntreClientes;
         this.cantidadCamareros = 4;
         this.cantidadCocineros = 2;
         this.cantidadMesas = 10;
@@ -70,6 +73,9 @@ public class Simulacion {
     }
 
     private void generarHilos() {
+        NotificadorCamarero notificadorCamarero = new NotificadorCamarero();
+        new Thread(notificadorCamarero).start();
+
         for (int i = 0; i < Personal.camareros.length; i++) {
             CamareroThread camareroThread = new CamareroThread(Personal.camareros[i]);
             new Thread(camareroThread).start();
@@ -77,7 +83,7 @@ public class Simulacion {
 
         }
         for (int i = 0; i < Personal.cocineros.length; i++) {
-            CocineroThread cocineroThread = new CocineroThread(Personal.cocineros[i]);
+            CocineroThread cocineroThread = new CocineroThread(Personal.cocineros[i], notificadorCamarero);
             new Thread(cocineroThread).start();
             Hilos.hilosCocineros.add(cocineroThread);
         }

@@ -3,17 +3,26 @@ package Model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Pedido {
+    @JsonIgnore // Ignora el campo "_id" del JSON
+    private String _id; // Este campo no se utilizará en tu clase, se ignorará
+    @JsonProperty("idPedido") // Mapea el campo "idPedido" del JSON al campo idPedido
     private String idPedido;
-    private String estado;
-    private Bebida bebidaPedido;
-    private Plato entrante;
-    private Plato primero;
-    private Plato postre;
-    private Mesa mesa;
-    private Cliente cliente;
-    private String precio;
-    private Camarero camarero;
+    public String estado;
+    public Bebida bebidaPedido;
+    public Plato entrante;
+    public Plato primero;
+    public Plato postre;
+    public Mesa mesa;
+    public Cliente cliente;
+    public String precio;
+    public Camarero camarero;
+
+    public Pedido() {
+    }
 
     public Pedido(String idPedido, String estado, Bebida bebidaPedido, Plato entrante, Plato primero, Plato postre,
             Mesa mesa, Cliente cliente) {
@@ -147,8 +156,9 @@ public class Pedido {
 
     @Override
     public String toString() {
-        return "Pedido [idPedido=" + idPedido + ", estado=" + estado + ", bebidaPedido=" + bebidaPedido + ", entrante="
-                + entrante + ", primero=" + primero + ", postre=" + postre + ", mesa=" + mesa + ", cliente=" + cliente
-                + ", precio=" + precio + "]";
+        return "Pedido idPedido=" + idPedido + ", bebidaPedido=" + bebidaPedido.getEstado()
+                + ", entrante="
+                + entrante.getEstado() + ", primero=" + primero.getEstado() + ", postre=" + postre.getEstado()
+                + ", mesa=" + mesa.getNumeroMesa();
     }
 }

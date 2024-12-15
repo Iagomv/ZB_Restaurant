@@ -1,6 +1,6 @@
 package Model;
 
-public class Cliente extends Thread {
+public class Cliente {
     private int numeroCliente;
     private int numeroComensales;
     private int numeroMesa;
@@ -15,6 +15,9 @@ public class Cliente extends Thread {
         this.estado = estado;
         this.pedido = pedido;
         this.mesa = mesa;
+    }
+
+    public Cliente() {
     }
 
     public void generarPedido() {

@@ -26,6 +26,10 @@ public class Bebida {
         this.estado = estado;
     }
 
+    public Bebida() {
+
+    }
+
     public String[] getParametrosBebida() {
         return new String[] { this.nombre, this.tipo, this.precio, this.stock };
     }

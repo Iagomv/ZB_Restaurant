@@ -7,6 +7,7 @@ import java.net.http.HttpResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import Handlers.JSONToPedido;
 import Handlers.PedidoToJSON;
 import Model.Pedido;
 
@@ -85,7 +86,6 @@ public class InsertarAPI {
 
             // Manejar la respuesta
             if (response.statusCode() == 200) {
-                System.out.println("Estado del pedido actualizado correctamente.");
                 return true;
             } else if (response.statusCode() == 404) {
                 System.err.println("Pedido no encontrado: " + id);
@@ -109,9 +109,6 @@ public class InsertarAPI {
             if (json != null) {
                 String cleanId = id.replace("\"", "");
 
-                // System.out.println("JSON enviado: " + json);
-                System.out.println("URL construida: " + API_URL + "/" + cleanId);
-
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(API_URL + "/" + cleanId))
                         .header("Content-Type", "application/json")
@@ -121,7 +118,6 @@ public class InsertarAPI {
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() == 200) {
-                    System.out.println("Pedido actualizado correctamente. Respuesta: " + response.body());
                     return true;
                 } else {
                     System.err.println("Error al actualizar el pedido. Código: " + response.statusCode());
@@ -139,9 +135,10 @@ public class InsertarAPI {
 
     public Pedido obtenerPedido(String id) {
         try {
+            String cleanId = id.replace("\"", "");
             // Construir la solicitud HTTP GET
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL + "/" + id)) // URL del endpoint con el ID del pedido
+                    .uri(URI.create(API_URL + "/" + cleanId)) // URL del endpoint con el ID del pedido
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();
@@ -152,11 +149,13 @@ public class InsertarAPI {
             // Manejar la respuesta
             if (response.statusCode() == 200) {
                 // Convertir el JSON de respuesta en un objeto Pedido
-                return objectMapper.readValue(response.body(), Pedido.class);
+                JSONToPedido jsonToPedido = new JSONToPedido();
+                Pedido pedido = jsonToPedido.convertirJsonAPedido(response.body());
+                return pedido;
             } else if (response.statusCode() == 404) {
                 System.err.println("Pedido no encontrado: " + id);
             } else {
-                System.err.println("Error al consultar el pedido. Código: " + response.statusCode());
+                System.err.println("Holaaaaaaa: " + response.statusCode());
                 System.err.println("Respuesta del servidor: " + response.body());
             }
         } catch (Exception e) {

@@ -34,7 +34,10 @@ public class Plato {
         this.precio = precio;
         this.stock = stock;
         this.estado = estado;
-        this.notificado = notificado;
+        this.notificado = false;
+    }
+
+    public Plato() {
     }
 
     public String[] getParametrosComida() {

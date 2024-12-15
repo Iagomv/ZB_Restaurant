@@ -94,4 +94,10 @@ public class ClienteEntidad extends Cliente implements Runnable {
     public void setMesa(Mesa mesa) {
         this.mesa = mesa;
     }
+
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'run'");
+    }
 }

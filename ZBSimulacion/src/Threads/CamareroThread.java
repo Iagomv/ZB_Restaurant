@@ -85,6 +85,7 @@ public class CamareroThread implements Runnable {
         } else {
             Hilos.hiloSommelier.agregarTarea(new Tarea("llevarBebida", pedido, pedido.getBebidaPedido()));
         }
+        System.out.println("Tomando pedido" + pedido.toString());
         avisarCocinero(pedido);
     }
 
@@ -120,7 +121,8 @@ public class CamareroThread implements Runnable {
     }
 
     private void llevarAMesa(Pedido pedido, Plato plato) {
-        System.out.println("El camarero " + camarero.getIdCamarero() + " lleva el plato: " + plato.getNombre());
+        System.out.println("El camarero " + camarero.getIdCamarero() + " lleva el plato: " + plato.getNombre()
+                + " de la mesa " + pedido.getMesa().getNumeroMesa());
         tiempoEstimado(tiempoLlevarPlato);
         plato.setEstado(estadoServido);
         if (pedidoCompleto(pedido)) {
