@@ -85,6 +85,25 @@ const actualizarEstadoPedido = async (req, res) => {
 		res.status(500).json({ mensaje: 'Error al actualizar el estado del pedido', error })
 	}
 }
+// Obtener pedidos por número de mesa
+const obtenerPedidosPorNumeroMesa = async (req, res) => {
+	try {
+		const { numeroMesa } = req.params // Obtener el número de mesa desde los parámetros de la URL
+
+		// Buscar pedidos que coincidan con el número de mesa
+		const pedidos = await cPedidos.find({ 'cliente.numeroMesa': parseInt(numeroMesa) }).toArray()
+
+		// Si no se encuentran pedidos, devolver mensaje de error
+		if (pedidos.length === 0) {
+			return res.status(404).json({ mensaje: 'No se encontraron pedidos para ese número de mesa' })
+		}
+
+		// Devolver los pedidos encontrados
+		res.status(200).json(pedidos)
+	} catch (error) {
+		res.status(500).json({ mensaje: 'Error al obtener los pedidos por número de mesa', error })
+	}
+}
 
 module.exports = {
 	obtenerPedidos,
@@ -92,4 +111,5 @@ module.exports = {
 	insertarPedido,
 	actualizarEstadoPedido,
 	actualizarPedido,
+	obtenerPedidosPorNumeroMesa,
 }

@@ -8,6 +8,9 @@ router.get('/', pedidosController.obtenerPedidos)
 // Ruta para obtener un pedido por ID
 router.get('/:id', pedidosController.obtenerPedidoPorId)
 
+// Obtener pedidos por número de mesa
+router.get('/mesa/:numeroMesa', pedidosController.obtenerPedidosPorNumeroMesa) // Nueva ruta para pedidos por número de mesa
+
 // Ruta para crear un nuevo pedido
 router.post('/', pedidosController.insertarPedido)
 
