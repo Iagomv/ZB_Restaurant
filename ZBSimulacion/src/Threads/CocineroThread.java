@@ -9,15 +9,19 @@ import Model.Pedido;
 import Model.Plato;
 import Model.Tarea;
 import Model.TareaCocina;
+import Static.Estados;
 import Static.Hilos;
+import Static.TiemposEspera;
 
 public class CocineroThread implements Runnable {
 
     private InsertarAPI api = new InsertarAPI();
-    private final int tiempoPrepararPlato = 5; // Tiempo estimado en segundos para preparar un plato
+    private int tiempoPrepararPlato = TiemposEspera.tiempoPrepararPlato; // Tiempo estimado en segundos para
+                                                                         // preparar un plato
     private Cocinero cocinero;
     private ArrayList<TareaCocina> listaTareas;
     private final Random random = new Random();
+    private String estadoPreparado = Estados.estadoPreparado;
 
     public CocineroThread(Cocinero cocinero) {
         this.cocinero = cocinero;
@@ -57,6 +61,7 @@ public class CocineroThread implements Runnable {
         for (Plato plato : platos) {
             cocinarPlato(plato);
             notificarCamarero(pedido, plato);
+            api.actualizarPedido(pedido.getIdPedido(), pedido);
         }
     }
 

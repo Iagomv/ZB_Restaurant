@@ -11,7 +11,9 @@ import Handlers.PedidoToJSON;
 import Model.Pedido;
 
 public class InsertarAPI {
-    private static final String API_URL = "http://localhost:6240/api/pedidos";
+    private static final String API_URL = "http://dam2.colexio-karbo.com:6240/api/Pedidos";
+    private static final String API_URL2 = "http://localhost:6240/api/Pedidos";
+
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -133,6 +135,35 @@ public class InsertarAPI {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Pedido obtenerPedido(String id) {
+        try {
+            // Construir la solicitud HTTP GET
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL + "/" + id)) // URL del endpoint con el ID del pedido
+                    .header("Content-Type", "application/json")
+                    .GET()
+                    .build();
+
+            // Enviar la solicitud
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Manejar la respuesta
+            if (response.statusCode() == 200) {
+                // Convertir el JSON de respuesta en un objeto Pedido
+                return objectMapper.readValue(response.body(), Pedido.class);
+            } else if (response.statusCode() == 404) {
+                System.err.println("Pedido no encontrado: " + id);
+            } else {
+                System.err.println("Error al consultar el pedido. Código: " + response.statusCode());
+                System.err.println("Respuesta del servidor: " + response.body());
+            }
+        } catch (Exception e) {
+            System.err.println("Error al consultar el pedido: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Clase auxiliar para convertir el estado a JSON

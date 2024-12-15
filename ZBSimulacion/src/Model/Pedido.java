@@ -1,5 +1,6 @@
 package Model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Pedido {
@@ -128,6 +129,16 @@ public class Pedido {
 
         precioTotal = precioEntrante + precioPrimero + precioPostre + precioBebida;
         return String.valueOf(precioTotal);
+    }
+
+    public ArrayList<Plato> getPlatosNotificados() {
+        ArrayList<Plato> notificados = new ArrayList<>();
+        for (Plato plato : getPlatos()) {
+            if (plato != null && plato.isNotificado()) {
+                notificados.add(plato);
+            }
+        }
+        return notificados;
     }
 
     public String getDescripcion() {

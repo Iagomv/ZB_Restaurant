@@ -15,13 +15,18 @@ import Static.Personal;
 public class ClienteEntidad extends Cliente implements Runnable {
     PedidoHandler pedidoHandler = new PedidoHandler();
     InsertarAPI APIinsert = new InsertarAPI();
+    Cliente cliente;
     Camarero camarero;
     CamareroThread camareroThread;
+    Mesa mesa;
 
     public ClienteEntidad(Cliente cliente) {
         super(cliente.getNumeroCliente(), cliente.getNumeroComensales(), cliente.getNumeroMesa(), cliente.getEstado(),
                 cliente.getPedido(), cliente.getMesa());
+        this.cliente = cliente;
+
         if (pedirMesaCamareroSala()) {
+            // System.out.println(this.getMesa().getNumeroMesa());
             // System.out.println(
             // "\tEl cliente " + this.getNumeroCliente() + " ha ocupado la mesa "
             // + this.getMesa().getNumeroMesa());
@@ -62,7 +67,31 @@ public class ClienteEntidad extends Cliente implements Runnable {
         Pedido pedido = pedidoHandler.crearPedido(Integer.parseInt(elecciones[0]), Integer.parseInt(elecciones[1]),
                 Integer.parseInt(elecciones[2]),
                 Integer.parseInt(elecciones[3]), this); // Creamos el pedido
+        // System.out.println(this.getMesa().getNumeroMesa());
         this.setPedido(pedido);
     }
 
+    public Camarero getCamarero() {
+        return camarero;
+    }
+
+    public void setCamarero(Camarero camarero) {
+        this.camarero = camarero;
+    }
+
+    public CamareroThread getCamareroThread() {
+        return camareroThread;
+    }
+
+    public void setCamareroThread(CamareroThread camareroThread) {
+        this.camareroThread = camareroThread;
+    }
+
+    public Mesa getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
+    }
 }

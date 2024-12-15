@@ -8,6 +8,7 @@ public class Plato {
     private String precio;
     private String stock;
     private String estado;
+    private boolean notificado;
 
     public Plato(String nombre, String tipo, String precio, String stock, String estado) {
         this.nombre = nombre;
@@ -24,6 +25,16 @@ public class Plato {
         this.precio = precio;
         this.stock = stock;
         this.estado = estado;
+    }
+
+    public Plato(int id, String nombre, String tipo, String precio, String stock, String estado, boolean notificado) {
+        this.id = id;
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.precio = precio;
+        this.stock = stock;
+        this.estado = estado;
+        this.notificado = notificado;
     }
 
     public String[] getParametrosComida() {
@@ -82,6 +93,14 @@ public class Plato {
     public String toString() {
         return "Plato [id=" + id + ", nombre=" + nombre + ", tipo=" + tipo + ", precio=" + precio + ", stock=" + stock
                 + "]";
+    }
+
+    public boolean isNotificado() {
+        return notificado;
+    }
+
+    public void setNotificado(boolean notificado) {
+        this.notificado = notificado;
     }
 
 }

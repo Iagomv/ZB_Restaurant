@@ -9,19 +9,21 @@ import Model.Pedido;
 import Model.Plato;
 import Model.Tarea;
 import Model.TareaCocina;
+import Static.Estados;
 import Static.Hilos;
 import Static.Personal;
+import Static.TiemposEspera;
 
 public class CamareroThread implements Runnable {
 
     private ArrayList<Tarea> listaTareas = new ArrayList<>();
     private InsertarAPI api = new InsertarAPI();
-    private final int tiempoTomarPedido = 2; // Tiempo estimado en segundos para tomar un pedido
-    private final int tiempoLlevarBebida = 2; // Tiempo estimado en segundos para llevar una bebida
-    private final int tiempoLlevarPlato = 1; // Tiempo estimado en segundos para llevar el plato
-    private final int tiempoCobrarPedido = 1; // Tiempo estimado en segundos para llevar el plato
-    private String estadoServido = "servido";
-    private String estadoCobrado = "cobrado";
+    private int tiempoTomarPedido = TiemposEspera.tiempoTomarPedido;
+    private int tiempoLlevarBebida = TiemposEspera.tiempoLlevarBebida;
+    private int tiempoLlevarPlato = TiemposEspera.tiempoLlevarPlato;
+    private int tiempoCobrarPedido = TiemposEspera.tiempoCobrarPedido;
+    private String estadoServido = Estados.estadoServido;
+    private String estadoCobrado = Estados.estadoCobrado;
 
     private Camarero camarero;
 
@@ -57,7 +59,7 @@ public class CamareroThread implements Runnable {
                 tomarPedido(tarea.getCliente(), tarea.getPedido());
                 break;
             case "llevarBebida":
-                llevarAMesa(tarea.getBebida());
+                llevarAMesa(tarea.getPedido(), tarea.getBebida());
                 break;
             case "llevarPlato":
                 llevarAMesa(tarea.getPedido(), tarea.getPlato());
@@ -78,6 +80,11 @@ public class CamareroThread implements Runnable {
         Pedido pedidoActualizadoConID = api.enviarPedido(pedido);
         pedidoActualizadoConID.setIdPedido(pedidoActualizadoConID.getIdPedido().replace("\"", ""));
         pedido = pedidoActualizadoConID;
+        if (!pedido.getBebidaPedido().getTipo().toLowerCase().equals("vino")) {
+            agregarTarea(new Tarea("llevarBebida", pedido, pedido.getBebidaPedido()));
+        } else {
+            Hilos.hiloSommelier.agregarTarea(new Tarea("llevarBebida", pedido, pedido.getBebidaPedido()));
+        }
         avisarCocinero(pedido);
     }
 
@@ -85,10 +92,8 @@ public class CamareroThread implements Runnable {
         tiempoEstimado(tiempoCobrarPedido);
         pedido.setEstado(estadoCobrado);
         api.actualizarPedido(pedido.getIdPedido(), pedido);
-
         System.out.println("Cobrando pedido");
         limpiarMesa(pedido);
-
     }
 
     private void limpiarMesa(Pedido pedido) {
@@ -96,14 +101,12 @@ public class CamareroThread implements Runnable {
         Personal.cSala.release();
     }
 
-    // TODO ENTREGAR BEBIDA
     private boolean pedidoCompleto(Pedido pedido) {
-        // boolean bebidaEntregada =
-        // (pedido.getBebidaPedido().getEstado().equals(estadoServido));
+        boolean bebidaEntregada = (pedido.getBebidaPedido().getEstado().equals(estadoServido));
         boolean entranteEntragado = (pedido.getEntrante().getEstado().equals(estadoServido));
         boolean primeroEntregado = (pedido.getPrimero().getEstado().equals(estadoServido));
         boolean postreEntregado = (pedido.getPostre().getEstado().equals(estadoServido));
-        return entranteEntragado && primeroEntregado && postreEntregado;
+        return bebidaEntregada && entranteEntragado && primeroEntregado && postreEntregado;
     }
 
     private void avisarCocinero(Pedido pedido) {
@@ -126,8 +129,11 @@ public class CamareroThread implements Runnable {
         api.actualizarPedido(pedido.getIdPedido(), pedido);
     }
 
-    private void llevarAMesa(Bebida bebida) {
+    private void llevarAMesa(Pedido pedido, Bebida bebida) {
         tiempoEstimado(tiempoLlevarBebida);
+        System.out.println("El camarero " + camarero.getIdCamarero() + " lleva la bebida: " + bebida.getNombre());
+        bebida.setEstado(estadoServido);
+        api.actualizarPedido(pedido.getIdPedido(), pedido);
     }
 
     private void actualizarEstadoPedido(Pedido pedido) {

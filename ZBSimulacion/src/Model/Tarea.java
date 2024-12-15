@@ -25,7 +25,12 @@ public class Tarea {
         this.tipoTarea = tipoTarea;
         this.pedido = pedido;
         this.plato = plato;
+    }
 
+    public Tarea(String tipoTarea, Pedido pedido, Bebida bebida) {
+        this.tipoTarea = tipoTarea;
+        this.pedido = pedido;
+        this.bebida = bebida;
     }
 
     public Tarea(String tipoTarea, Plato plato) {

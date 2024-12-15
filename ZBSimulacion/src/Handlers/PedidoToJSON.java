@@ -44,7 +44,7 @@ public class PedidoToJSON {
         Map<String, Object> clienteMap = new HashMap<>();
         clienteMap.put("numeroCliente", cliente.getNumeroCliente());
         clienteMap.put("numeroComensales", cliente.getNumeroComensales());
-        clienteMap.put("numeroMesa", cliente.getNumeroMesa());
+        clienteMap.put("numeroMesa", cliente.getMesa().getNumeroMesa());
         clienteMap.put("estado", cliente.getEstado());
         pedidoMap.put("cliente", clienteMap);
 

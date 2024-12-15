@@ -6,6 +6,7 @@ import Static.Personal;
 import Threads.CamareroThread;
 import Threads.ClienteEntidad;
 import Threads.CocineroThread;
+import Threads.SommelierThread;
 
 public class Simulacion {
     private int tiempoEntreClientes;
@@ -22,15 +23,16 @@ public class Simulacion {
         generarInstanciasRestaurante();
         generarHilos();
         generarCarta();
-
         // Bucle principal
         while (true) {
             Personal.clientes.add(getInstancia.generarCliente(numeroDeCliente, tiempoEntreClientes, "En espera"));
             numeroDeCliente++;
             Cliente cliente = Personal.clientes.remove(0);
+
             new ClienteEntidad(cliente);
+
             try {
-                Thread.sleep(500);
+                Thread.sleep(tiempoEntreClientes * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -38,7 +40,7 @@ public class Simulacion {
     }
 
     private void setVariables() {
-        this.tiempoEntreClientes = 7;
+        this.tiempoEntreClientes = 5;
         this.cantidadCamareros = 4;
         this.cantidadCocineros = 2;
         this.cantidadMesas = 10;
@@ -79,5 +81,7 @@ public class Simulacion {
             new Thread(cocineroThread).start();
             Hilos.hilosCocineros.add(cocineroThread);
         }
+        Hilos.hiloSommelier = new SommelierThread(Personal.sommelier);
+        new Thread(Hilos.hiloSommelier).start();
     }
 }
