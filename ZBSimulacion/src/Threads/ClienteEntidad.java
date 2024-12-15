@@ -26,15 +26,13 @@ public class ClienteEntidad extends Cliente implements Runnable {
         this.cliente = cliente;
 
         if (pedirMesaCamareroSala()) {
-            // System.out.println(this.getMesa().getNumeroMesa());
-            // System.out.println(
-            // "\tEl cliente " + this.getNumeroCliente() + " ha ocupado la mesa "
-            // + this.getMesa().getNumeroMesa());
+            System.out.println(this.getMesa().getNumeroMesa());
+            System.out.println(
+                    "\tEl cliente " + this.getNumeroCliente() + " ha ocupado la mesa "
+                            + this.getMesa().getNumeroMesa());
             presentacionCamarero();
             realizarPedido();
             camareroTomaPedido();
-
-            // Camarero.start();
         }
 
     }

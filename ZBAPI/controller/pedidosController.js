@@ -17,14 +17,22 @@ const obtenerPedidos = async (req, res) => {
 
 // Obtener un pedido por ID
 const obtenerPedidoPorId = async (req, res) => {
+	const { id } = req.params
+	console.log(id)
+
+	// Verificar si el ID es válido
+	if (!ObjectId.isValid(id)) {
+		return res.status(400).json({ mensaje: 'ID de pedido inválido' })
+	}
+
 	try {
-		const { id } = req.params
-		const pedido = await cPedidos.findOne({ _id: new client.ObjectId(id) })
+		const pedido = await cPedidos.findOne({ _id: new ObjectId(id) })
 		if (!pedido) {
 			return res.status(404).json({ mensaje: 'Pedido no encontrado' })
 		}
 		res.status(200).json(pedido)
 	} catch (error) {
+		console.error('Error al obtener el pedido:', error) // Agrega un log para ver el error real
 		res.status(500).json({ mensaje: 'Error al obtener el pedido', error })
 	}
 }

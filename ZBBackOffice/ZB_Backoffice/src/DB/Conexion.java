@@ -28,7 +28,8 @@ public class Conexion {
 
             // Verificar si el archivo se encuentra
             if (inputStream == null) {
-                throw new IllegalArgumentException("El archivo config.xml no se encuentra en el classpath.");
+                System.out.println("No se pudo cargar el archivo config.xml. Revisa la ubicación del archivo.");
+                throw new IllegalArgumentException("Caca al cargar el archivo de configuración.");
             } else {
                 System.out.println("Archivo config.xml cargado exitosamente.");
             }

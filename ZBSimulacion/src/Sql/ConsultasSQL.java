@@ -147,4 +147,18 @@ public class ConsultasSQL {
             stmt.executeUpdate();
         }
     }
+
+    public void agregarIngreso(double importe) throws SQLException {
+        if (connection == null) {
+            throw new SQLException("No se pudo conectar a la base de datos.");
+        }
+
+        String sql = "INSERT INTO ingresos (Ingresos) VALUES (?)"; // Cambié "ingreso" por "Ingresos"
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setDouble(1, importe); // Establecemos el importe que queremos agregar
+            stmt.executeUpdate();
+        }
+    }
+
 }
