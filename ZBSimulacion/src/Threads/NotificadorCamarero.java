@@ -54,10 +54,24 @@ public class NotificadorCamarero implements Runnable {
             for (Plato plato : pedidoActualizado.getPlatos()) {
                 // Si el plato está preparado y aún no ha sido notificado, lo notificamos
                 if (Estados.estadoEntregar.equals(plato.getEstado()) && !platoYaNotificado(plato)) {
-                    plato.setEstado(Estados.estadoNotificado);
-                    System.out.println(plato.getEstado());
-                    api.actualizarPedido(pedidoActualizado.getIdPedido(), pedido);
-                    notificarCamarero(pedido, plato);
+                    if (plato.getTipo().equals("Entrante")) {
+                        pedido.getEntrante().setNotificado(true);
+                        pedido.getEntrante().setEstado(Estados.estadoNotificado);
+                        api.actualizarPedido(pedido.getIdPedido(), pedido);
+                        notificarCamarero(pedido, pedido.getEntrante());
+                    } else if (plato.getTipo().equals("Primero")) {
+                        pedido.getPrimero().setNotificado(true);
+                        pedido.getPrimero().setEstado(Estados.estadoNotificado);
+                        api.actualizarPedido(pedido.getIdPedido(), pedido);
+                        notificarCamarero(pedido, pedido.getPrimero());
+                    } else if (plato.getTipo().equals("Postre")) {
+                        pedido.getPostre().setNotificado(true);
+                        pedido.getPostre().setEstado(Estados.estadoNotificado);
+                        api.actualizarPedido(pedido.getIdPedido(), pedido);
+                        notificarCamarero(pedido, pedido.getPostre());
+
+                    }
+
                 }
             }
         } catch (Exception e) {
@@ -72,6 +86,7 @@ public class NotificadorCamarero implements Runnable {
 
     private void notificarCamarero(Pedido pedido, Plato plato) {
         try {
+
             // Obtenemos al camarero asignado al pedido
             Camarero camarero = pedido.getMesa().getCamareroAsignado();
 
@@ -84,8 +99,7 @@ public class NotificadorCamarero implements Runnable {
                     Hilos.hilosCamareros.get(camarero).notify(); // Notificamos al camarero asignado
                 }
                 System.out.println("Notificando camarero: " + camarero.getIdCamarero() + " para llevar el plato: "
-                        + plato.getNombre() + "estado del plato: " + plato.getEstado());
-                plato.setNotificado(true); // Marcamos el plato como notificado
+                        + plato.getNombre() + "estado del plato: " + plato.getEstado() + pedido.toString());
             } else {
                 System.err.println("Camarero no encontrado en hilos activos: " + camarero);
             }

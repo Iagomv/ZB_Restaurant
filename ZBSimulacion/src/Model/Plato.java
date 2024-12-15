@@ -94,8 +94,7 @@ public class Plato {
 
     @Override
     public String toString() {
-        return "Plato [id=" + id + ", nombre=" + nombre + ", tipo=" + tipo + ", precio=" + precio + ", stock=" + stock
-                + "]";
+        return "Plato [nombre=" + nombre + ", tipo=" + tipo + ", estado=" + estado + ", notificado=" + notificado + "]";
     }
 
     public boolean isNotificado() {

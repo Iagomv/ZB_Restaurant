@@ -103,6 +103,7 @@ public class CamareroThread implements Runnable {
     }
 
     private boolean pedidoCompleto(Pedido pedido) {
+        System.out.println("Estado servido: " + estadoServido);
         boolean bebidaEntregada = (pedido.getBebidaPedido().getEstado().equals(estadoServido));
         boolean entranteEntragado = (pedido.getEntrante().getEstado().equals(estadoServido));
         boolean primeroEntregado = (pedido.getPrimero().getEstado().equals(estadoServido));
@@ -120,15 +121,20 @@ public class CamareroThread implements Runnable {
         }
     }
 
+    // ! ZEROBUGS?
     private void llevarAMesa(Pedido pedido, Plato plato) {
-        System.out.println("El camarero " + camarero.getIdCamarero() + " lleva el plato: " + plato.getNombre()
-                + " de la mesa " + pedido.getMesa().getNumeroMesa());
+        plato.setEstado(estadoServido);// ! ZEROBUGS?
+        System.out.println("El camarero " + camarero.getIdCamarero() + " lleva el plato: " + plato.toString());
         tiempoEstimado(tiempoLlevarPlato);
-        plato.setEstado(estadoServido);
+        plato.setNotificado(true);
         if (pedidoCompleto(pedido)) {
             cobrarPedido(pedido);
         }
-        api.actualizarPedido(pedido.getIdPedido(), pedido);
+        boolean respuesta = api.actualizarPedido(pedido.getIdPedido(), pedido);
+        if (respuesta) {
+            System.err.println("Correcto al actualizar el pedido: " + pedido.getIdPedido());
+        }
+        System.out.println("Plato " + plato.getTipo() + ": " + plato.getNombre() + " " + plato.getEstado());
     }
 
     private void llevarAMesa(Pedido pedido, Bebida bebida) {
